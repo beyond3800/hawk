@@ -1,0 +1,223 @@
+yourapp/
+│
+├── main.go
+├── commands/
+│   └── migrate.go
+├── migrations/
+│   ├── create-table-users.sql
+│   └── create-table-products.sql
+
+
+
+create-table-users
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+
+
+package commands
+
+import (
+	"database/sql"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/spf13/cobra"
+	_ "github.com/lib/pq"
+)
+
+var MigrateCmd = &cobra.Command{
+	Use:   "migrate",
+	Short: "Run SQL migrations from the migrations/ folder",
+	Run: func(cmd *cobra.Command, args []string) {
+		conn := "user=postgres password=yourpassword dbname=my_custom_db sslmode=disable"
+
+		db, err := sql.Open("postgres", conn)
+		if err != nil {
+			panic(err)
+		}
+		defer db.Close()
+
+		files, err := ioutil.ReadDir("./migrations")
+		if err != nil {
+			fmt.Println("❌ Error reading migrations folder:", err)
+			return
+		}
+
+		for _, file := range files {
+			if !file.IsDir() && strings.HasSuffix(file.Name(), ".sql") {
+				path := filepath.Join("./migrations", file.Name())
+				sqlBytes, err := os.ReadFile(path)
+				if err != nil {
+					fmt.Println("❌ Failed to read", file.Name(), ":", err)
+					continue
+				}
+
+				sqlStr := string(sqlBytes)
+				fmt.Println("🚀 Running migration:", file.Name())
+				_, err = db.Exec(sqlStr)
+				if err != nil {
+					fmt.Println("❌ Failed to execute", file.Name(), ":", err)
+				} else {
+					fmt.Println("✅ Success:", file.Name())
+				}
+			}
+		}
+	},
+}
+
+
+
+
+package main
+
+import (
+	"fmt"
+	"yourapp/commands"
+
+	"github.com/spf13/cobra"
+)
+
+; func main() {
+; 	var rootCmd = &cobra.Command{Use: "goartisan"}
+
+; 	rootCmd.AddCommand(commands.MigrateCmd)
+
+; 	if err := rootCmd.Execute(); err != nil {
+; 		fmt.Println(err)
+; 	}
+; }
+
+
+
+
+
+package commands
+
+import (
+	"fmt"
+	"os"
+	"strings"
+	"time"
+
+	"github.com/spf13/cobra"
+)
+
+; var MakeMigrationCmd = &cobra.Command{
+; 	Use:   "make:migration [name]",
+; 	Short: "Create a new migration SQL file",
+; 	Args:  cobra.ExactArgs(1),
+; 	Run: func(cmd *cobra.Command, args []string) {
+; 		name := strings.ToLower(strings.ReplaceAll(args[0], " ", "_"))
+; 		timestamp := time.Now().Format("20060102_150405")
+; 		filename := fmt.Sprintf("migrations/%s_%s.sql", timestamp, name)
+
+; 		// Make sure the folder exists
+; 		if _, err := os.Stat("migrations"); os.IsNotExist(err) {
+; 			err := os.Mkdir("migrations", 0755)
+; 			if err != nil {
+; 				fmt.Println("❌ Failed to create migrations folder:", err)
+; 				return
+; 			}
+; 		}
+
+; 		content := fmt.Sprintf("-- Migration: %s\n\n-- Write your SQL here\n", name)
+; 		err := os.WriteFile(filename, []byte(content), 0644)
+; 		if err != nil {
+; 			fmt.Println("❌ Could not create migration file:", err)
+; 			return
+; 		}
+
+; 		fmt.Println("✅ Migration file created:", filename)
+; 	},
+; }
+
+
+
+package main
+
+import (
+	"fmt"
+	"yourapp/commands"
+
+	"github.com/spf13/cobra"
+)
+
+; func main() {
+; 	var rootCmd = &cobra.Command{Use: "goartisan"}
+
+; 	rootCmd.AddCommand(commands.MigrateCmd)
+; 	rootCmd.AddCommand(commands.MakeMigrationCmd) // 👈 Add this line
+
+; 	if err := rootCmd.Execute(); err != nil {
+; 		fmt.Println(err)
+; 	}
+; }
+
+
+
+yourapp/
+├── main.go
+├── cmd/
+│   └── root.go
+├── commands/
+│   ├── migrate.go
+│   └── make_migration.go
+
+
+
+; package cmd
+
+; import (
+; 	"fmt"
+; 	"yourapp/commands" // Replace with your actual module name
+; 	"github.com/spf13/cobra"
+; )
+
+; var RootCmd = &cobra.Command{Use: "goartisan"}
+
+; func init() {
+; 	RootCmd.AddCommand(commands.MigrateCmd)
+; 	RootCmd.AddCommand(commands.MakeMigrationCmd)
+; }
+
+; func Execute() {
+; 	if err := RootCmd.Execute(); err != nil {
+; 		fmt.Println("❌ Error:", err)
+; 	}
+; }
+goartisan-framework/
+├── main.go
+├── go.mod
+├── .env
+├── cmd/
+│   └── root.go
+├── commands/
+│   ├── migrate.go
+│   ├── make_migration.go
+│   └── ...more commands
+├── migrations/
+│   └── ...sql files
+
+
+
+
+
+
+
+
+
+Make the DB connection configurable via .env file or flags.
+
+Track which migrations have been applied.
+
+Automatically rollback on error.
