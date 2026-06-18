@@ -11,7 +11,6 @@ A lightweight Laravel-inspired web framework written in Go.
 
 ## Features
 
-- Fast HTTP RouterM
 - Middleware
 - Route Groups
 - Validation
@@ -32,4 +31,3 @@ app.Get("/", func(c *hawk.Context) {
     })
 })
 
-app.Run(":8000")
