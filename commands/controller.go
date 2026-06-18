@@ -15,7 +15,7 @@ var controller = &cobra.Command{
 	Short: "creates a controller in the controller's folder",
 	Long: "",
 	Run: func(cmd *cobra.Command, args []string) {
-		dir := "controllers"
+		dir := "app/Http/Controllers"
 		_,err:= os.Stat(dir);
 		if  os.IsNotExist(err) {
 			err := os.Mkdir(dir,0755)
@@ -38,7 +38,7 @@ var controller = &cobra.Command{
 				return
 			}
 
-			err =lib.GenerateTemplate(name,"controller")
+			err =lib.GenerateTemplate(name,"controllers",dir)
 			if err != nil{
 				fmt.Println(err)
 				return

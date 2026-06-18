@@ -17,7 +17,7 @@ var makeModelCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		name := args[0]
-		dir := "models"
+		dir := "app/Models"
 		if !strings.HasSuffix(name,"Model"){
 			name = name + "Model"
 		}
@@ -28,7 +28,8 @@ var makeModelCmd = &cobra.Command{
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			log.Fatal(err)
 		}
-		if err := lib.GenerateTemplate(name,"model"); err != nil{
+		path := "app/Models"
+		if err := lib.GenerateTemplate(name,"models",path); err != nil{
 			log.Println(err)
 			return
 		}

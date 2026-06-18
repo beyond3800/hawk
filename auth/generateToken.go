@@ -13,6 +13,8 @@ import (
 )
 
 var jwtKey = []byte(os.Getenv("LOG_KEY"))
+
+
 func Auth(user_id string) (string, error) {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
@@ -31,6 +33,8 @@ func Auth(user_id string) (string, error) {
 	return tokenString,nil
 	// fmt.Print(jwtKey)
 }
+
+
 func ValidateToken(tokenStr string) (types.Token, error) {
 	var tokenDetails types.Token
     token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {

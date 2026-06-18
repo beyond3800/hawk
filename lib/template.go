@@ -7,7 +7,7 @@ import (
 	"text/template"
 )
 
-func GenerateTemplate(name string, templateName string) error {
+func GenerateTemplate(name string, templateName string, path string) error {
 	// Parse the template file in the templates directory
 	type templateDatas struct{
 		Name string
@@ -21,15 +21,8 @@ func GenerateTemplate(name string, templateName string) error {
 	}
 
 	// Set the output file path
-	var folderName string
-	if strings.HasSuffix(templateName,"y"){
-		base := templateName[:len(templateName)-1]
-		folderName = base +"ies"
-	}else{
-		folderName = templateName+"s"
-	}
-	
-	fileName := fmt.Sprintf("./%s/%s.go", folderName, name)
+	templateName = "app/Http/"+strings.Title(templateName)
+	fileName := fmt.Sprintf("%s/%s.go", templateName, name)
 	// fileName = strings.ToUpper(string(name[0]))+string(name[1:])
 	file, err := os.Create(fileName)
 	if err != nil {

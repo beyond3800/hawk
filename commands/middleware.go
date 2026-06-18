@@ -14,7 +14,7 @@ var middlewareCmd = &cobra.Command{
 	Short: "Run middleware commands",
 	Run: func(cmd *cobra.Command, args []string) {
 		// This command is a placeholder for middleware-related commands.
-		dir := "middleware"
+		dir := "app/Http/Middleware"
 		_,err:= os.Stat(dir);
 		if  os.IsNotExist(err) {
 			err := os.Mkdir(dir,0755)

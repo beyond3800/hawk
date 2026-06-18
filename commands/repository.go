@@ -15,7 +15,8 @@ var repository = &cobra.Command{
 	Short: "Use to create repository file",
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		dir :="repositories"
+		dir :="app/Http/Repository"
+		path :="app/Http/Repository"
 		_,err := os.Stat(dir)
 		if err !=nil{
 			if err := os.Mkdir(dir, 0755); err != nil{
@@ -30,7 +31,7 @@ var repository = &cobra.Command{
 				fmt.Println("This file already in" + dir)
 				return
 			}
-		err = lib.GenerateTemplate(name,"repository")
+		err = lib.GenerateTemplate(name,"repository",path)
 		if err != nil{
 			fmt.Println("Unable to create file")
 			return

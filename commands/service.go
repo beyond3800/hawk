@@ -15,7 +15,7 @@ var service = &cobra.Command{
 	Short: "Use to create service file",
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		dir := "services"
+		dir := "app/Http/Services"
 		name := args[0]
 		if !strings.HasSuffix(name,"Service"){
 			name = name + "Service"
@@ -30,10 +30,10 @@ var service = &cobra.Command{
 			return
 		}
 		
-		err := lib.GenerateTemplate(name,"service")
+		err := lib.GenerateTemplate(name,"services",dir)
 		if err != nil{
-			log.Fatal(err)
-			log.Fatal("Unable to create service")
+			fmt.Println(err)
+			fmt.Println("Unable to create service")
 			return
 		}
 		log.Println("Service created successfully")
