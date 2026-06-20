@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/beyond3800/hawk/lib"
 	"github.com/spf13/cobra"
@@ -12,9 +11,6 @@ import (
 
 
 func createModel(name string, dir string){
-	if !strings.HasSuffix(name,"Model"){
-		name = name + "Model"
-	}
 	if lib.FileExist(dir,name){
 		fmt.Println("This file already in" + dir)
 		return

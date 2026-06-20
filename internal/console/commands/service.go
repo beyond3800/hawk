@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/beyond3800/hawk/lib"
 	"github.com/spf13/cobra"
@@ -17,9 +16,7 @@ var service = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		dir := "app/Http/Services"
 		name := args[0]
-		if !strings.HasSuffix(name,"Service"){
-			name = name + "Service"
-		}
+
 		if _,err := os.Stat(dir); err != nil{
 			if err := os.MkdirAll(dir,0755); err != nil{
 				fmt.Println("Unable to create folder")

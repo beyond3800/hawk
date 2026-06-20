@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/beyond3800/hawk/lib"
 	"github.com/spf13/cobra"
@@ -24,9 +23,6 @@ var middlewareCmd = &cobra.Command{
 		}
 		
 		name:=args[0]
-		if !strings.HasSuffix(name,"Middleware"){
-				name = name + "Middleware"
-			}
 		fmt.Println("Creating middleware:", name)
 		if lib.FileExist(dir,name){
 			fmt.Println("This file already in" + dir)

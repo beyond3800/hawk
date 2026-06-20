@@ -25,7 +25,7 @@ func SetupRoutes() *hawk.Hawk {
 			Code: 200,
 		})
 	})
-	app.Post("/users", userController.Store)
+	app.Post("/users", userController.Show)
 	app.Get("/user",userController.Show)
 	return app
 }

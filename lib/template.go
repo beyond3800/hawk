@@ -14,14 +14,15 @@ func GenerateTemplate(name string, templateName string, path string) error {
 		ShortName string
 	}
 	
-	templateContent := fmt.Sprintf("./templates/%s.tmpl",strings.ToLower(templateName))
+	templateContent := fmt.Sprintf("templates/%s.tmpl",strings.ToLower(templateName))
 	tmpl, err := template.ParseFiles(templateContent)
 	if err != nil {
 		return err
 	}
 
 	// Set the output file path
-	templateName = path+strings.Title(templateName)
+	templateName = path
+
 	fileName := fmt.Sprintf("%s/%s.go", templateName, name)
 	// fileName = strings.ToUpper(string(name[0]))+string(name[1:])
 	file, err := os.Create(fileName)
@@ -43,7 +44,7 @@ func MakeMigrationTemplate(name string, templateName string, migrationName strin
 		MigrationName string
 	}
 	fmt.Println(name,templateName)
-	templateContent := fmt.Sprintf("./templates/%s.tmpl",strings.ToLower(templateName))
+	templateContent := fmt.Sprintf("templates/%s.tmpl",strings.ToLower(templateName))
 	tmpl, err := template.ParseFiles(templateContent)
 	if err != nil {
 		return err
@@ -80,14 +81,14 @@ func MakeMiddlewareTemplate(name string, templateName string) error {
 	// 	fileName := fmt.Sprintf("./middleware/%s.go", name)
 	// 	return
 	// }
-	templateContent := fmt.Sprintf("./templates/%s.tmpl",strings.ToLower(templateName))
+	templateContent := fmt.Sprintf("templates/%s.tmpl",strings.ToLower(templateName))
 	tmpl, err := template.ParseFiles(templateContent)
 	if err != nil {
 		return err
 	}
 
 	name = strings.Title(name)
-	fileName := fmt.Sprintf("./middleware/%s.go", name)
+	fileName := fmt.Sprintf("app/Http/Middleware/%s.go", name)
 	file, err := os.Create(fileName)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)
@@ -102,13 +103,13 @@ func MakeTemplate(name string, templateName string, path string, data string) er
 		Name string
 	}
 	
-	templateContent := fmt.Sprintf("./templates/%s.tmpl",strings.ToLower(templateName))
+	templateContent := fmt.Sprintf("templates/%s.tmpl",strings.ToLower(templateName))
 	tmpl, err := template.ParseFiles(templateContent)
 	if err != nil {
 		return err
 	}
 
-	fileName := fmt.Sprintf("./%s/%s.go", path, name)
+	fileName := fmt.Sprintf("%s/%s.go", path, name)
 	file, err := os.Create(fileName)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)

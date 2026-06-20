@@ -30,11 +30,12 @@ var controller = &cobra.Command{
 			// fmt.Println("you are creating an api controller")
 			// string(s[0])
 			name:=args[0]
-			if !strings.HasSuffix(name,"Controller"){
+			if !strings.HasSuffix(name,"Controller") && !strings.HasSuffix(name,"controller"){
+				fmt.Println(name)
 				name = name + "Controller"
 			}
 			if lib.FileExist(dir,name){
-				fmt.Println("This file already in" + dir)
+				fmt.Println(`This file already exist in ` + dir)
 				return
 			}
 

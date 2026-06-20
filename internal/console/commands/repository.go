@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/beyond3800/hawk/lib"
 	"github.com/spf13/cobra"
@@ -24,9 +23,6 @@ var repository = &cobra.Command{
 			}
 		}
 		name := args[0]
-		if !strings.HasSuffix(name,"Repository"){
-			name = name + "Repository"
-		}
 		if lib.FileExist(dir,name){
 				fmt.Println("This file already in" + dir)
 				return

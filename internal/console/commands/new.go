@@ -37,10 +37,10 @@ func createProject(name string) error {
 			return err
 		}
 	}
-	if err := lib.MakeTemplate("main","main","/", name); err != nil{
+	if err := lib.MakeTemplate("main","main",name, name); err != nil{
 		return err
 	}
-	if err := lib.MakeTemplate(".env","env","",""); err != nil{
+	if err := lib.MakeTemplate(".env","env",name,""); err != nil{
 		return err
 	}
 	if err := lib.MakeTemplate("web","web","routes/",""); err != nil{
