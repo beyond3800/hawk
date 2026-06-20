@@ -21,7 +21,7 @@ func GenerateTemplate(name string, templateName string, path string) error {
 	}
 
 	// Set the output file path
-	templateName = "app/Http/"+strings.Title(templateName)
+	templateName = path+strings.Title(templateName)
 	fileName := fmt.Sprintf("%s/%s.go", templateName, name)
 	// fileName = strings.ToUpper(string(name[0]))+string(name[1:])
 	file, err := os.Create(fileName)
@@ -96,4 +96,24 @@ func MakeMiddlewareTemplate(name string, templateName string) error {
 	data :=  templateDatas{Name:strings.Title(name)}
 	return tmpl.Execute(file, data)
 	
+}
+func MakeTemplate(name string, templateName string, path string, data string) error{
+	type templateDatas struct{
+		Name string
+	}
+	
+	templateContent := fmt.Sprintf("./templates/%s.tmpl",strings.ToLower(templateName))
+	tmpl, err := template.ParseFiles(templateContent)
+	if err != nil {
+		return err
+	}
+
+	fileName := fmt.Sprintf("./%s/%s.go", path, name)
+	file, err := os.Create(fileName)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer file.Close()
+	datas :=  templateDatas{Name:data}
+	return tmpl.Execute(file, datas)
 }

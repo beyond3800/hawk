@@ -12,8 +12,7 @@ func (Tester TesterMigration) Up() error {
     _, err := database.HawkDB().Conn.Exec(`
         CREATE TABLE Tester (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(255),
-            email VARCHAR(255)
+            name VARCHAR(255)
         )
     `)
 

@@ -51,7 +51,7 @@ func (b *Builder) First(dest any) error {
 
     query, args := b.ToSQL()
 
-    rows, err := instance.Conn.Query(query, args...)
+    rows, err := HawkDB().Conn.Query(query, args...)
 	if err != nil {
 		return err
 	}
@@ -98,7 +98,7 @@ func (b *Builder) Get(dest any) error {
 
 	query, args := b.ToSQL()
 
-	rows, err := instance.Conn.Query(query, args...)
+	rows, err := HawkDB().Conn.Query(query, args...)
 	if err != nil {
 		return err
 	}
@@ -175,7 +175,7 @@ func (b *Builder) Insert(data map[string]any) (sql.Result, error) {
         strings.Join(placeholders, ", "),
     )
 
-    return instance.Conn.Exec(query, values...)
+    return HawkDB().Conn.Exec(query, values...)
 }
 func (b *Builder) Update(data map[string]any) (sql.Result, error) {
 
@@ -199,7 +199,7 @@ func (b *Builder) Update(data map[string]any) (sql.Result, error) {
 
     values = append(values, b.bindings...)
 
-    return instance.Conn.Exec(query, values...)
+    return HawkDB().Conn.Exec(query, values...)
 }
 func (b *Builder) Delete() (sql.Result, error) {
 
@@ -209,5 +209,5 @@ func (b *Builder) Delete() (sql.Result, error) {
         query += " WHERE " + strings.Join(b.wheres, " AND ")
     }
 
-    return instance.Conn.Exec(query, b.bindings...)
+    return HawkDB().Conn.Exec(query, b.bindings...)
 }
