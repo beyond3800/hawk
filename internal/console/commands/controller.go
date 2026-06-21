@@ -31,7 +31,6 @@ var controller = &cobra.Command{
 			// string(s[0])
 			name:=args[0]
 			if !strings.HasSuffix(name,"Controller") && !strings.HasSuffix(name,"controller"){
-				fmt.Println(name)
 				name = name + "Controller"
 			}
 			if lib.FileExist(dir,name){

@@ -1,0 +1,33 @@
+package Migrations
+
+import (
+
+    "github.com/beyond3800/hawk/core/migration"
+	"github.com/beyond3800/hawk/core/database"
+)
+
+type {{.Name}}Migration struct{}
+
+func ({{.Name}} {{.Name}}Migration) Up() error {
+    _, err := database.HawkDB().Conn.Exec(`
+        CREATE TABLE {{.Name}} (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255),
+            email VARCHAR(255)
+        )
+    `)
+
+    return err
+}
+
+func ({{.Name}} {{.Name}}Migration) Down() error {
+    _, err := database.HawkDB().Conn.Exec(`
+        DROP TABLE {{.Name}}
+    `)
+
+    return err
+}
+
+func init (){
+    migration.Register("{{.MigrationName}}",{{.Name}}Migration{})
+}
