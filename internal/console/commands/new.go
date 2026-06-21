@@ -11,25 +11,25 @@ import (
 )
 
 
-func createProject(name string) error {
+func createProject(projectName string) error {
 
 	// create folders
 	dirs := []string{
-		name,
+		projectName,
 
-		filepath.Join(name, "app/Models"),
+		filepath.Join(projectName, "app/Models"),
 
-		filepath.Join(name, "app/Http/Controllers"),
-		filepath.Join(name, "app/Http/Middleware"),
-		filepath.Join(name, "app/Http/Repository"),
-		filepath.Join(name, "app/Http/Services"),
+		filepath.Join(projectName, "app/Http/Controllers"),
+		filepath.Join(projectName, "app/Http/Middleware"),
+		filepath.Join(projectName, "app/Http/Repository"),
+		filepath.Join(projectName, "app/Http/Services"),
 
-		filepath.Join(name, "database/migrations"),
-		filepath.Join(name, "database/seeders"),
-		filepath.Join(name, "database/factory"),
+		filepath.Join(projectName, "database/migrations"),
+		filepath.Join(projectName, "database/seeders"),
+		filepath.Join(projectName, "database/factory"),
 		
-		filepath.Join(name, "routes"),
-		filepath.Join(name, "config"),
+		filepath.Join(projectName, "routes"),
+		filepath.Join(projectName, "config"),
 	}
 
 	for _, dir := range dirs {
@@ -37,20 +37,20 @@ func createProject(name string) error {
 			return err
 		}
 	}
-	if err := lib.MakeTemplate("main.go","main",name+"/", name); err != nil{
+	if err := lib.MakeTemplate("main.go","main",projectName+"/", projectName); err != nil{
 		return err
 	}
-	if err := lib.MakeTemplate(".env","env",name+"/",""); err != nil{
+	if err := lib.MakeTemplate(".env","env",projectName+"/",""); err != nil{
 		return err
 	}
-	if err := lib.MakeTemplate("web.go","web",name+"/routes/",""); err != nil{
+	if err := lib.MakeTemplate("web.go","web",projectName+"/routes/",""); err != nil{
 		return err
 	}
-	createMigration("create_users_table",name+"/database/migrations")
-	createModel("user",name+"/app/Models")
+	createMigration("create_users_table",projectName+"/database/migrations")
+	createModel("user",projectName+"/app/Models")
 
-	cmd := exec.Command("go", "mod", "init", name)
-	cmd.Dir = name
+	cmd := exec.Command("go", "mod", "init", projectName)
+	cmd.Dir = projectName
 	if err := cmd.Run(); err != nil {
 		return err
 	}

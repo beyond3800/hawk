@@ -12,8 +12,10 @@ import (
 func createMigration(name string, migrationDir string) {
 	_,err := os.Stat(migrationDir)
 		if err !=nil{
-			if err := os.Mkdir(migrationDir, 0755); err != nil{
-				fmt.Println("Unable to create file")
+			if os.IsNotExist(err) {
+				if err := os.MkdirAll(migrationDir, 0755); err != nil {
+					return
+				}
 			}
 		}
 		
@@ -27,7 +29,7 @@ func createMigration(name string, migrationDir string) {
 		}
 		timestamp := time.Now().Format("20060102150405")
 		migrationName := fmt.Sprintf("%s_%s", timestamp, name)
-		err = lib.MakeMigrationTemplate(name,"migration",migrationName)
+		err = lib.MakeMigrationTemplate(name,"migration",migrationName, migrationDir)
 		if err != nil{
 			fmt.Println("Unable to create file")
 			return

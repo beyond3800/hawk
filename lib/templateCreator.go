@@ -3,11 +3,13 @@ package lib
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"text/template"
-	"golang.org/x/text/cases"
-    "golang.org/x/text/language"
+
 	"github.com/beyond3800/hawk/internal/templates"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 func toTitle(s string) string{
 	caser := cases.Title(language.English)
@@ -33,7 +35,9 @@ func GenerateTemplate(name string, templateName string, path string) error {
 	// Set the output file path
 	templateName = path
 
-	fileName := fmt.Sprintf("%s/%s.go", templateName, name)
+	fileName := filepath.Join(
+		templateName, 
+		name+".go",)
 	// fileName = strings.ToUpper(string(name[0]))+string(name[1:])
 	file, err := os.Create(fileName)
 	if err != nil {
@@ -50,7 +54,7 @@ func GenerateTemplate(name string, templateName string, path string) error {
 	return tmpl.Execute(file, data)
 }
 
-func MakeMigrationTemplate(name string, templateName string, migrationName string) error {
+func MakeMigrationTemplate(name string, templateName string, migrationName string, migrationDir string) error {
 
 	type templateDatas struct{
 		Name string
@@ -67,15 +71,19 @@ func MakeMigrationTemplate(name string, templateName string, migrationName strin
 	}
 
 	// Set the output file path
-	
-	fileName := "database/migrations/" + migrationName + ".go"
+	fileName := filepath.Join(
+        migrationDir,
+        migrationName+".go",
+    )
 	// fileName = strings.ToUpper(string(name[0]))+string(name[1:])
 	nameArr := strings.Split(name, "_")
-	if len(nameArr) == 3{
-		// if nameArr[1] != "create" || nameArr[1] != "table"{
-			name = nameArr[1]
-		// }
+	if len(nameArr) >= 3 &&nameArr[0] == "create" &&nameArr[len(nameArr)-1] == "table" {
+		name = strings.Join(
+			nameArr[1:len(nameArr)-1],
+			"_",
+		)
 	}
+
 	file, err := os.Create(fileName)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)
@@ -105,9 +113,9 @@ func MakeMiddlewareTemplate(name string, templateName string) error {
 	
 	name = toTitle(name)
 
-	fileName := fmt.Sprintf(
-		"app/Http/Middleware/%s.go",
-		name,
+	fileName := filepath.Join(
+		"app/Http/Middleware",
+		name+".go",
 	)
 
 	file, err := os.Create(fileName)
@@ -123,7 +131,6 @@ func MakeMiddlewareTemplate(name string, templateName string) error {
 	return tmpl.Execute(file, data)
 }
 
-
 func MakeTemplate(name string, templateName string, path string, data string) error{
 	type templateDatas struct{
 		Name string
@@ -138,7 +145,10 @@ func MakeTemplate(name string, templateName string, path string, data string) er
 		return err
 	}
 
-	fileName := fmt.Sprintf("%s%s", path, name)
+	fileName := filepath.Join(
+		path,
+		name+".go",
+	)
 	file, err := os.Create(fileName)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)

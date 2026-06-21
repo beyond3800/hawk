@@ -18,8 +18,7 @@ func createModel(name string, dir string){
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		log.Fatal(err)
 	}
-	path := "app/Models"
-	if err := lib.GenerateTemplate(name,"model",path); err != nil{
+	if err := lib.GenerateTemplate(name,"model",dir); err != nil{
 		log.Println(err)
 		return
 	}
