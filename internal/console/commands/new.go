@@ -37,17 +37,17 @@ func createProject(name string) error {
 			return err
 		}
 	}
-	if err := lib.MakeTemplate("main.go","main",name, name); err != nil{
+	if err := lib.MakeTemplate("main.go","main","", name); err != nil{
 		return err
 	}
-	if err := lib.MakeTemplate(".env","env",name,""); err != nil{
+	if err := lib.MakeTemplate(".env","env","",""); err != nil{
 		return err
 	}
-	if err := lib.MakeTemplate("web.go","web","routes/",""); err != nil{
+	if err := lib.MakeTemplate("web.go","web",name+"/routes/",""); err != nil{
 		return err
 	}
-	createMigration("create_users_table","database/migrations")
-	createModel("user","app/Models")
+	createMigration("create_users_table",name+"/database/migrations")
+	createModel("user",name+"/app/Models")
 
 	cmd := exec.Command("go", "mod", "init", name)
 	cmd.Dir = name
