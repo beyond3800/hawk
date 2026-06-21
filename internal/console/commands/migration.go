@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func createMigration(name string, migrationDir string){
+func createMigration(name string, migrationDir string) {
 	_,err := os.Stat(migrationDir)
 		if err !=nil{
 			if err := os.Mkdir(migrationDir, 0755); err != nil{
@@ -32,6 +32,7 @@ func createMigration(name string, migrationDir string){
 			fmt.Println("Unable to create file")
 			return
 		}
+		fmt.Println("Migration created successfully")
 }
 
 var migrationCmd = &cobra.Command{
