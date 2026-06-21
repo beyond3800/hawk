@@ -48,14 +48,27 @@ func createProject(projectName string) error {
 	}
 	createMigration("create_users_table",projectName+"/database/migrations")
 	createModel("user",projectName+"/app/Models")
+	createController("user",projectName+"app/Http/Controllers")
 
 	cmd := exec.Command("go", "mod", "init", projectName)
 	cmd.Dir = projectName
 	if err := cmd.Run(); err != nil {
 		return err
 	}
-	return nil
-}
+	
+	cmd = exec.Command("go", "get","github.com/beyond3800/hawk")
+	cmd.Dir = projectName
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+
+	cmd = exec.Command("go", "mod", "tidy")
+	cmd.Dir = projectName
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+		return nil
+	}
 
 var newCmd = &cobra.Command{
 	Use:   "new [projectName]",
