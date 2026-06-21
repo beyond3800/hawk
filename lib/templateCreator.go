@@ -138,7 +138,7 @@ func MakeTemplate(name string, templateName string, path string, data string) er
 		return err
 	}
 
-	fileName := fmt.Sprintf("%s%s.go", path, name)
+	fileName := fmt.Sprintf("%s%s", path, name)
 	file, err := os.Create(fileName)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)

@@ -37,13 +37,13 @@ func createProject(name string) error {
 			return err
 		}
 	}
-	if err := lib.MakeTemplate("main","main",name, name); err != nil{
+	if err := lib.MakeTemplate("main.go","main",name, name); err != nil{
 		return err
 	}
 	if err := lib.MakeTemplate(".env","env",name,""); err != nil{
 		return err
 	}
-	if err := lib.MakeTemplate("web","web","routes/",""); err != nil{
+	if err := lib.MakeTemplate("web.go","web","routes/",""); err != nil{
 		return err
 	}
 	createMigration("create_users_table","database/migrations")
