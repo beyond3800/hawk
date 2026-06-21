@@ -19,7 +19,7 @@ func createModel(name string, dir string){
 		log.Fatal(err)
 	}
 	path := "app/Models"
-	if err := lib.GenerateTemplate(name,"models",path); err != nil{
+	if err := lib.GenerateTemplate(name,"model",path); err != nil{
 		log.Println(err)
 		return
 	}
