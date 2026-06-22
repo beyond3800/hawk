@@ -58,7 +58,9 @@ func createProject(projectName string) error {
 
 	cmd = exec.Command("go", "get","github.com/beyond3800/hawk")
 	cmd.Dir = projectName
-	if err := cmd.Run(); err != nil {
+	output, err := cmd.CombinedOutput()
+	fmt.Println(string(output))
+	if err = cmd.Run(); err != nil {
 		return err
 	}
 

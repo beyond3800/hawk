@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/beyond3800/hawk/core/validation"
+	"github.com/beyond3800/hawk/internal/core/validation"
 )
 
 // context

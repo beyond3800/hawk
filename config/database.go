@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"github.com/beyond3800/hawk/core/database"
+	"github.com/beyond3800/hawk/internal/core/database"
 )
 
 func DSN() database.Config {

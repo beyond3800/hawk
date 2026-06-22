@@ -3,9 +3,9 @@ package commands
 import (
 	"fmt"
 
-	"github.com/beyond3800/hawk/core/migration"
+	"github.com/beyond3800/hawk/internal/core/migration"
 	_"github.com/beyond3800/hawk/database/migrations"
-	"github.com/beyond3800/hawk/core/database"
+	"github.com/beyond3800/hawk/internal/core/database"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )

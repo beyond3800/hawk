@@ -1,7 +1,7 @@
 package Controllers
 
 import (
-	"github.com/beyond3800/hawk/core/hawk"
+	"github.com/beyond3800/hawk/internal/core/hawk"
 )
 
 type UserController struct {}

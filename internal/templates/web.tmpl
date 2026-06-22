@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/beyond3800/hawk/app/Http/Controllers"
-	"github.com/beyond3800/hawk/core/hawk"
+	"github.com/beyond3800/hawk/internal/core/hawk"
 )
 
 func SetupRoutes() *hawk.Hawk {

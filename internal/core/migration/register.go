@@ -5,7 +5,7 @@ import (
 	_ "fmt"
 	_ "os"
 
-	"github.com/beyond3800/hawk/core/database"
+	"github.com/beyond3800/hawk/internal/core/database"
 )
 
 type RegisteredMigration struct{

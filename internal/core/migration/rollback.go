@@ -3,7 +3,7 @@ package migration
 import (
 	"fmt"
 
-	"github.com/beyond3800/hawk/core/database"
+	"github.com/beyond3800/hawk/internal/core/database"
 )
 
 func LatestBatch() (int, error) {
