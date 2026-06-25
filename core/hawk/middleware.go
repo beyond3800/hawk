@@ -23,6 +23,7 @@ func Logger(c *Context) {
         latency,
     )
 }
+
 func Recovery(c *Context) {
     defer func() {
         if err := recover(); err != nil {
@@ -32,6 +33,7 @@ func Recovery(c *Context) {
 
     c.Next()
 }
+
 func Cors(config CorsConfig) HandlerFunc {
     return func(c *Context) {
 

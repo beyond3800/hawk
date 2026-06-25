@@ -17,12 +17,12 @@ type Builder struct {
 	orderBy  string
 	inserts  map[string]any
 }
-
 func (db *DB) Table(name string) *Builder {
 	return &Builder{
 		table: name,
 	}
 }
+
 func (b *Builder) Select(columns ...string) *Builder {
 	b.columns = columns
 	return b

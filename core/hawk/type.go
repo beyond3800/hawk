@@ -7,6 +7,22 @@ import (
 )
 type HandlerFunc func (*Context)
 
+type Route struct{
+	Method     string
+	Pattern    string
+	Handler    []HandlerFunc
+}
+
+type Hawk struct {
+	routes     []Route
+	middleware []HandlerFunc
+}
+type RouterGroup struct {
+    prefix      string
+    parent      *RouterGroup
+    engine      *Hawk
+	handler  []HandlerFunc
+}
 type Context struct {
 	Response  http.ResponseWriter
 	Request  *http.Request
@@ -29,22 +45,6 @@ type CorsConfig struct{
 	MaxAge             time.Duration
 }
 
-type Route struct{
-	Method     string
-	Pattern    string
-	Handler    []HandlerFunc
-}
-type Hawk struct {
-	routes     []Route
-	middleware []HandlerFunc
-}
-
-type RouterGroup struct {
-    prefix      string
-    parent      *RouterGroup
-    engine      *Hawk
-	handler  []HandlerFunc
-}
 type ErrorResponse struct {
     Error   string `json:"error"`
     Message string `json:"message"`
@@ -55,7 +55,6 @@ type SuccessResponse struct {
     Message string `json:"message"`
     Code    int    `json:"code"`
 }
-
 func match(pattern, path string) (bool, map[string]string) {
     params := make(map[string]string)
 

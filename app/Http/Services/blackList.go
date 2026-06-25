@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/beyond3800/hawk/config"
+	rdb "github.com/beyond3800/hawk/core/redis"
 	"github.com/redis/go-redis/v9"
 )
 
 
-func BlacklistToken(rdb *redis.Client, token string, ttl time.Duration) error{
-	return rdb.Set(config.Ctx,"blacklist:"+token, token, ttl).Err()
+func BlacklistToken(rc *redis.Client, token string, ttl time.Duration) error{
+	return rc.Set(rdb.Ctx,"blacklist:"+token, token, ttl).Err()
 }
 
 
-func IsBlackListed(rdb *redis.Client, token string) (bool, error){
-	_, err := rdb.Get(config.Ctx,"blacklist:"+token).Result()
+func IsBlackListed(rc *redis.Client, token string) (bool, error){
+	_, err := rc.Get(rdb.Ctx,"blacklist:"+token).Result()
 	// fmt.Println(val)
 	if err == redis.Nil{
 		fmt.Println("Not blacklisted")

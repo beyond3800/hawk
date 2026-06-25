@@ -4,21 +4,21 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/beyond3800/hawk/config"
+	rdb "github.com/beyond3800/hawk/core/redis"
 )
 
 func RedisSet(name string, data any, ttl time.Duration) error{
-	return config.Rdb.Set(config.Ctx, name, data, ttl).Err()
+	return rdb.Rdb.Set(rdb.Ctx, name, data, ttl).Err()
 }
 func RedisGet(name string) (string, error){
-	return config.Rdb.Get(config.Ctx,name).Result()
+	return rdb.Rdb.Get(rdb.Ctx,name).Result()
 }
 func RedisExists(key string)(bool,error){
-	count,err := config.Rdb.Exists(config.Ctx, key).Result()
+	count,err := rdb.Rdb.Exists(rdb.Ctx, key).Result()
 	return count == 1, err
 }
 func RedisDelete(key string) error{
-	return config.Rdb.Del(config.Ctx, key).Err()
+	return rdb.Rdb.Del(rdb.Ctx, key).Err()
 }
 func RedisSetJSON(key string, data any, ttl time.Duration) error{
 	b,_ := json.Marshal(data)

@@ -1,8 +1,6 @@
 package hawk
 
-import (
-	"strings"
-)
+import "strings"
 
 func (h *Hawk) addRoute(method string, path string, handler ...HandlerFunc){
 	h.routes = append(h.routes, Route{

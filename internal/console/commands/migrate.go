@@ -3,9 +3,9 @@ package commands
 import (
 	"fmt"
 
-	"github.com/beyond3800/hawk/core/migration"
-	_"github.com/beyond3800/hawk/database/migrations"
-	"github.com/beyond3800/hawk/core/database"
+	_ "github.com/beyond3800/hawk/database/migrations"
+	"github.com/beyond3800/hawk/internal/boostrap/database"
+	"github.com/beyond3800/hawk/internal/console/migration"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
@@ -18,8 +18,8 @@ var migrateCmd  = &cobra.Command{
 			fmt.Println("Error loading .env file")
 			return
 		}
-		database.ConnectDatabase()
 		
+		database.ConnectDatabase()
 		if err := migration.Run(); err != nil{
 			fmt.Println(err)
 			fmt.Println("Unable to migrate database")

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/beyond3800/hawk/config"
+	rdb "github.com/beyond3800/hawk/core/redis"
 )
 
 func Dispatch(queue string, payload interface{}) error{
@@ -12,8 +12,8 @@ func Dispatch(queue string, payload interface{}) error{
 	if err != nil {
 		return fmt.Errorf("Unable to marsh payload")
 	}
-	redis := config.Rdb
-	ctx := config.Ctx
+	redis := rdb.Rdb
+	ctx := rdb.Ctx
 	return redis.LPush(ctx,queue,data).Err()
 }
 
@@ -21,8 +21,8 @@ func DispatchWithTime() {
 
 }
 func worker(queue string) error{
-	redis := config.Rdb
-	ctx := config.Ctx
+	redis := rdb.Rdb
+	ctx := rdb.Ctx
 	for{
 		result,err := redis.BLPop(ctx,0,queue).Result()
 		if err != nil {

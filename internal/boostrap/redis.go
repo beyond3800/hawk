@@ -1,20 +1,17 @@
 package bootstrap
 
-
-
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
 
+	rdb "github.com/beyond3800/hawk/core/redis"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
 
 var (
-	Ctx = context.Background()
 	Rdb* redis.Client
 )
 func ConnectRedis() *redis.Client { 
@@ -31,12 +28,13 @@ func ConnectRedis() *redis.Client {
 		Password: os.Getenv("REDIS_PASSWORD"),
 		DB: dbInt,
 	})
-	pong, err := Rdb.Ping(Ctx).Result()
+	pong, err := Rdb.Ping(rdb.Ctx).Result()
 
 	if err != nil{
 		log.Println("Redis is not working")
 		return Rdb
 	}
+	rdb.SetRedis(Rdb)
 	fmt.Println(pong)
 	return Rdb
 }
