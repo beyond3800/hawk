@@ -14,14 +14,14 @@ import (
 var (
 	Rdb* redis.Client
 )
-func ConnectRedis() *redis.Client { 
+func ConnectRedis() error { 
 	if err := godotenv.Load(); err != nil{
-		log.Fatal("Unable to load the neccessery file")
+		return fmt.Errorf("Unable to load the neccessery file")
 	}
 	
 	dbInt, err := strconv.Atoi(os.Getenv("REDIS_DB"))
 	if err != nil{
-		log.Fatal("A number is needed not a string")
+		return fmt.Errorf("A number is needed not a string")
 	}
 	Rdb = redis.NewClient(&redis.Options{
 		Addr: os.Getenv("REDIS_ADDR"),
@@ -32,9 +32,8 @@ func ConnectRedis() *redis.Client {
 
 	if err != nil{
 		log.Println("Redis is not working")
-		return Rdb
 	}
 	rdb.SetRedis(Rdb)
 	fmt.Println(pong)
-	return Rdb
+	return nil
 }
