@@ -37,9 +37,6 @@ func createProject(projectName string) error {
 			return err
 		}
 	}
-	if err := lib.MakeTemplate("main.go","main",projectName+"/", projectName); err != nil{
-		return err
-	}
 	if err := lib.MakeTemplate(".env","env",projectName+"/",""); err != nil{
 		return err
 	}

@@ -147,7 +147,7 @@ func MakeTemplate(name string, templateName string, path string, data string) er
 
 	fileName := filepath.Join(
 		path,
-		name+".go",
+		name,
 	)
 	file, err := os.Create(fileName)
 	if err != nil {
