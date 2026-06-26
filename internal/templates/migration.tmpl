@@ -10,7 +10,7 @@ type {{.Name}}Migration struct{}
 
 func ({{.Name}} {{.Name}}Migration) Up() error {
     _, err := database.HawkDB().Conn.Exec(`
-        CREATE TABLE {{.Name}} (
+        CREATE TABLE {{.TableName}} (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255),
             email VARCHAR(255)
@@ -22,7 +22,7 @@ func ({{.Name}} {{.Name}}Migration) Up() error {
 
 func ({{.Name}} {{.Name}}Migration) Down() error {
     _, err := database.HawkDB().Conn.Exec(`
-        DROP TABLE {{.Name}}
+        DROP TABLE {{.TableName}}
     `)
 
     return err

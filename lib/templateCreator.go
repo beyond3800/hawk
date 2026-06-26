@@ -54,11 +54,18 @@ func GenerateTemplate(name string, templateName string, path string) error {
 	return tmpl.Execute(file, data)
 }
 
-func MakeMigrationTemplate(name string, templateName string, migrationName string, migrationDir string) error {
+func MakeMigrationTemplate(
+	name string, 
+	templateName string, 
+	migrationName string, 
+	migrationDir string,
+
+	) error {
 
 	type templateDatas struct{
 		Name string
 		MigrationName string
+		TableName string
 	}
 
 	templateContent := fmt.Sprintf("%s.tmpl",strings.ToLower(templateName))
@@ -91,7 +98,7 @@ func MakeMigrationTemplate(name string, templateName string, migrationName strin
 	defer file.Close()
 	name = toTitle(name)
 	// Fill in the template and write the file
-	data :=  templateDatas{Name:name, MigrationName: migrationName}
+	data :=  templateDatas{Name:name, MigrationName: migrationName, TableName: strings.ToLower(name)}
 	return tmpl.Execute(file, data)
 }
 

@@ -25,4 +25,5 @@ func Air() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println("Running at " + os.Getenv("APP_PORT"))
 }
