@@ -1,5 +1,5 @@
 package hawk
 
 func Version() string {
-	return "0.6.0-beta"
+	return "0.7.1-beta"
 }

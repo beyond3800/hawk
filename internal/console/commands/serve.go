@@ -1,11 +1,10 @@
 package commands
 
 import (
-	"fmt"
+	"os"
 	"strings"
 
 	bootstrap "github.com/beyond3800/hawk/internal/boostrap"
-	"github.com/beyond3800/hawk/routes"
 	"github.com/spf13/cobra"
 )
 
@@ -22,10 +21,8 @@ var serve = &cobra.Command{
 				port = args[0]
 			}
 		}
-		bootstrap.Boostrap()
-		r := routes.SetupRoutes()
-		r.Run(port)
-		fmt.Printf("Running on server %v","127.0.0.1:8080")
+		os.Setenv("APP_PORT", port)
+		bootstrap.Air()
 	},
 }
 

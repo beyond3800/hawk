@@ -40,6 +40,9 @@ func createProject(projectName string) error {
 	if err := lib.MakeTemplate(".env","env",projectName+"/",""); err != nil{
 		return err
 	}
+	if err := lib.MakeTemplate("main.go","main",projectName+"/",projectName); err != nil{
+		return err
+	}
 	if err := lib.MakeTemplate("web.go","web",projectName+"/routes/",""); err != nil{
 		return err
 	}
@@ -65,7 +68,31 @@ func createProject(projectName string) error {
 		return err
 	}
 		return nil
-	}
+}
+func installAir() {
+    if _, err := exec.LookPath("air"); err == nil {
+        fmt.Println("Air already installed.")
+        return
+    }
+
+    fmt.Println("Installing Air...")
+
+    cmd := exec.Command(
+        "go",
+        "install",
+        "github.com/air-verse/air@latest",
+    )
+
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
+
+    if err := cmd.Run(); err != nil {
+        fmt.Println("Failed to install Air:", err)
+        return
+    }
+
+    fmt.Println("Air installed successfully.")
+}
 
 var newCmd = &cobra.Command{
 	Use:   "new [projectName]",
@@ -84,8 +111,8 @@ var newCmd = &cobra.Command{
 			fmt.Println("Error:", err)
 			return
 		}
-
-		fmt.Println("Project created:", project)
+		installAir()
+		fmt.Println("Project created successfully:", project)
 	},
 }
 

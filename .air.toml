@@ -6,8 +6,8 @@ testdata_dir = "testdata"
 tmp_dir = ".tmp"
 
 [build]
-  cmd = "go build -o .tmp/hawk ./cmd/hawk"
-  entrypoint = ["./.tmp/main.exe", "serve"]
+  cmd = "go build -o .tmp/hawk.exe ./cmd/hawk"
+  entrypoint = ["./.tmp/hawk.exe", "serve"]
   delay = 1000
   exclude_dir = ["assets", ".tmp", "vendor", "testdata"]
   exclude_file = []
@@ -27,7 +27,7 @@ tmp_dir = ".tmp"
   rerun = false
   rerun_delay = 500
   send_interrupt = false
-  stop_on_error = false
+  stop_on_error = true
 
 [color]
   app = ""

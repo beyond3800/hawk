@@ -3,20 +3,23 @@ package bootstrap
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/beyond3800/hawk/internal/boostrap/database"
 )
 
-func Boostrap() {
-	dbEnable := os.Getenv("DB_ENABLED")
-	redisEnable := os.Getenv("REDIS_ENABLED")
+func Bootstrap() {
+    dbEnable := os.Getenv("DB_ENABLED")
+    redisEnabled := os.Getenv("REDIS_ENABLED")
+    if strings.ToLower(dbEnable) == "true" {
+        if err := database.ConnectDatabase(); err != nil {
+            fmt.Println("Database:", err)
+        }
+    }
 
-	if dbEnable != "" {
-		err := database.ConnectDatabase()
-		fmt.Println(err)
-	}
-	if redisEnable != ""{
-		err := ConnectRedis()
-		fmt.Println(err)
-	}
+    if strings.ToLower(redisEnabled) == "true" {
+        if err := ConnectRedis(); err != nil {
+            fmt.Println("Redis:", err)
+        }
+    }
 }
