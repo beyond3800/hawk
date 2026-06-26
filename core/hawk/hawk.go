@@ -1,7 +1,7 @@
 package hawk
 
-
 import (
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -40,8 +40,20 @@ func (h *Hawk) Use(handler ...HandlerFunc){
 	h.middleware = append(h.middleware, handler...)
 }
 
-func (h *Hawk) Run(addr string) error {
-	return http.ListenAndServe(addr, h)
+func (h *Hawk) Run(port string) error {
+    url :=fmt.Sprintf("Hawk server running at http://127.0.0.1%s\n", port)
+    fmt.Printf(`
+                ┌─────────────────────────────┐
+                │         HAWK SERVER         │
+                ├─────────────────────────────┤
+                │ URL: %-23s                  │
+                │ ENV: %-23s                  │
+                └─────────────────────────────┘
+                `,
+                url,
+                "development",
+            )
+	return http.ListenAndServe(port, h)
 }
 
 func (g *RouterGroup) Use(handler HandlerFunc){
