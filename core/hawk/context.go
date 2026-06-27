@@ -3,7 +3,6 @@ package hawk
 // Don't edit or add anything here
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/beyond3800/hawk/core/validation"
@@ -18,7 +17,9 @@ func (c *Context) BindAndValidate(obj any) error {
     if err := c.BindJSON(obj); err != nil {
         return err
     }
-    if err := c.ValidationError(validation.Validate(obj)); err != nil{
+    errors, err := validation.Validate(obj)
+    if err != nil{
+        c.ValidationError(errors)
         return err
     }
     return nil
@@ -62,15 +63,11 @@ func (c *Context) Next() {
         c.index++
     }
 }
-func (c *Context) ValidationError(err any) error{
-    if err != nil{
-        c.JSON(http.StatusUnprocessableEntity, map[string]any{
-            "message": "validation failed",
-            "errors":  err,
-        })
-        return fmt.Errorf("validation failed")
-    }
-    return nil
+func (c *Context) ValidationError(err any) {
+    c.JSON(http.StatusUnprocessableEntity, map[string]any{
+        "message": "validation failed",
+        "errors":  err,
+    })
 }
 func (c *Context) Cookie(key string) (string, error) {
     cookie, err := c.Request.Cookie(key)

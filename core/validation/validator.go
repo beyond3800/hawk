@@ -1,12 +1,13 @@
 package validation
 
 import (
+	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
 )
 
-
+type errors map[string]string
 type Validator struct {
     error map[string]string
 }
@@ -56,7 +57,7 @@ func (v *Validator) Unique(field string, value string, table string){
 
 }
 
-func Validate(data any) map[string]string {
+func Validate(data any) (errors, error) {
     v := &Validator{
         error: make(map[string]string),
     }
@@ -94,5 +95,8 @@ func Validate(data any) map[string]string {
         }
 
     }
-    return v.error
+    if len(v.error) > 0{
+        return v.error, fmt.Errorf("Validation Error")
+    }
+    return nil, nil
 }
