@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+type H map[string]any
+
 func (h *Hawk) ServeHTTP(response http.ResponseWriter, request *http.Request) {
     for _, route := range h.routes {
 
@@ -42,17 +44,7 @@ func (h *Hawk) Use(handler ...HandlerFunc){
 
 func (h *Hawk) Run(port string) error {
     url :=fmt.Sprintf("Hawk server running at http://127.0.0.1%s\n", port)
-    fmt.Printf(`
-                ┌─────────────────────────────┐
-                │         HAWK SERVER         │
-                ├─────────────────────────────┤
-                │ URL: %-23s                  │
-                │ ENV: %-23s                  │
-                └─────────────────────────────┘
-                `,
-                url,
-                "development",
-            )
+    fmt.Println(url)
 	return http.ListenAndServe(port, h)
 }
 
