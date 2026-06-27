@@ -63,12 +63,11 @@ func (c *Context) Next() {
     }
 }
 func (c *Context) ValidationError(err any) error{
-
-    c.JSON(http.StatusUnprocessableEntity, map[string]any{
-        "message": "validation failed",
-        "errors":  err,
-    })
     if err != nil{
+        c.JSON(http.StatusUnprocessableEntity, map[string]any{
+            "message": "validation failed",
+            "errors":  err,
+        })
         return fmt.Errorf("validation failed")
     }
     return nil

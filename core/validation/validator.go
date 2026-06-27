@@ -1,7 +1,6 @@
 package validation
 
 import (
-	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -58,7 +57,6 @@ func (v *Validator) Unique(field string, value string, table string){
 }
 
 func Validate(data any) map[string]string {
-    fmt.Println("validate")
     v := &Validator{
         error: make(map[string]string),
     }
