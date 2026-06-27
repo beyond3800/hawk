@@ -60,10 +60,14 @@ func (c *Context) Next() {
     }
 }
 func (c *Context) ValidationError(err any) {
+
     c.JSON(http.StatusUnprocessableEntity, map[string]any{
         "message": "validation failed",
         "errors":  err,
     })
+    if err != nil{
+        return 
+    }
 }
 func (c *Context) Cookie(key string) (string, error) {
     cookie, err := c.Request.Cookie(key)
