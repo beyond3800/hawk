@@ -1,2 +1,9 @@
-tmp/
+
 .air.toml
+app/
+routes/
+config/
+database/
+jobs/
+.env
+.tmp/
