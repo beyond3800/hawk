@@ -61,7 +61,7 @@ func createProject(projectName string) error {
 		return err
 	}
 
-	cmd = exec.Command("go", "get","github.com/beyond3800/hawk")
+	cmd = exec.Command("go", "get","github.com/beyond3800/hawk@latest")
 	cmd.Dir = projectName
 	if err := cmd.Run(); err != nil {
 		return err

@@ -3,7 +3,6 @@
 app/
 routes/
 config/
-database/
 jobs/
 .env
 .tmp/
