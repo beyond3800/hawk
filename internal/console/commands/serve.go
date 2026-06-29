@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	bootstrap "github.com/beyond3800/hawk/internal/boostrap"
+	bootstrap "github.com/beyond3800/hawk/internal/bootstrap"
 	"github.com/spf13/cobra"
 )
 

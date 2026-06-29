@@ -19,6 +19,8 @@ func createProject(projectName string) error {
 
 		filepath.Join(projectName, "app/Models"),
 
+		filepath.Join(projectName, "bootstrap"),
+
 		filepath.Join(projectName, "app/Http/Controllers"),
 		filepath.Join(projectName, "app/Http/Middleware"),
 		filepath.Join(projectName, "app/Http/Repository"),
@@ -44,6 +46,9 @@ func createProject(projectName string) error {
 		return err
 	}
 	if err := lib.MakeTemplate("web.go","web",projectName+"/routes/",""); err != nil{
+		return err
+	}
+	if err := lib.MakeTemplate("app.go","app",projectName+"/bootstrap/",projectName); err != nil{
 		return err
 	}
 	createMigration("create_users_table",projectName+"/database/migrations")

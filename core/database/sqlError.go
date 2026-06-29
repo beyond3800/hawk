@@ -1,7 +1,0 @@
-package database
-
-
-
-func MySqlErrorFormat() {
-
-}

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	rdb "github.com/beyond3800/hawk/core/redis"
+	rdb "github.com/beyond3800/hawk/redis"
 	"github.com/redis/go-redis/v9"
 )
 

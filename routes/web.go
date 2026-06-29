@@ -3,8 +3,7 @@ package routes
 import (
 	"time"
 
-	"github.com/beyond3800/hawk/app/Http/Controllers"
-	"github.com/beyond3800/hawk/core/hawk"
+	"github.com/beyond3800/hawk/engine"
 )
 
 func SetupRoutes() *hawk.Hawk {
@@ -17,7 +16,6 @@ func SetupRoutes() *hawk.Hawk {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
-	userController := Controllers.UserController{}
 	app.Get("/", func(c *hawk.Context) {
 		c.JSON(200, hawk.SuccessResponse{
 			Success: "Welcome to Hawk",
@@ -25,7 +23,5 @@ func SetupRoutes() *hawk.Hawk {
 			Code: 200,
 		})
 	})
-	app.Post("/users", userController.Show)
-	app.Get("/user",userController.Show)
 	return app
 }

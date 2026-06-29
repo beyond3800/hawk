@@ -2,10 +2,8 @@ package migration
 
 import (
 	"fmt"
-	_ "fmt"
-	_ "os"
 
-	"github.com/beyond3800/hawk/core/database"
+	"github.com/beyond3800/hawk/database"
 )
 
 type RegisteredMigration struct{
@@ -24,35 +22,6 @@ func Register(name string, m Migration) {
 	})
 }
 
-func Run() error {
-	migrationHappen := false
-	if err := createMigrationTable(); err != nil {
-		return err
-	}
-
-	batch,err := nextBatch()
-	if err != nil {
-		return err
-	}
-	for _, migration := range migrations {
-		if hasMigrated(migration.Name){
-			continue
-		}
-		if err := migration.M.Up(); err != nil {
-			migrationHappen = true
-			return err
-		}
-		fmt.Println(migration.Name)
-		saveMigration(migration.Name,batch)
-	}
-	if migrationHappen{
-		fmt.Println("Database migrated successfully")
-	}else{
-		fmt.Println("Noting to migrate")
-	}
-
-	return nil
-}
 
 func hasMigrated(name string) bool {
 
@@ -66,7 +35,6 @@ func hasMigrated(name string) bool {
     if err != nil {
         return false
     }
-
     return count > 0
 }
 
@@ -93,7 +61,7 @@ func saveMigration (migration string, batch int) error{
 }
 
 func createMigrationTable() error{
-	    _, err := database.HawkDB().Conn.Exec(`
+	_, err := database.HawkDB().Conn.Exec(`
         CREATE TABLE IF NOT EXISTS Migrations (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
             migration VARCHAR(255),
@@ -104,15 +72,32 @@ func createMigrationTable() error{
 	return err
 }
 
-// for another update
+func Run() error {
+	migrationHappen := false
+	
+	if err := createMigrationTable(); err != nil {
+		return err
+	}
 
-// migrations, err := os.ReadDir("database/migrations")
-// if err != nil{
-// 	return err
-// }
-// for _, m := range migrations{
-// 	if m.Name() != "" {
-// 		return fmt.Errorf("Migration exist already")
-// 	}
+	batch,err := nextBatch()
+	if err != nil {
+		return err
+	}
+	for _, migration := range migrations {
+		if hasMigrated(migration.Name){
+			continue
+		}
+		if err := migration.M.Up(); err != nil {
+			migrationHappen = true
+			return err
+		}
+		saveMigration(migration.Name,batch)
+	}
+	if migrationHappen{
+		fmt.Println("Database migrated successfully")
+	}else{
+		fmt.Println("Noting to migrate")
+	}
 
-// }
+	return nil
+}

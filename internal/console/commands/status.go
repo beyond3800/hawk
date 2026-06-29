@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/beyond3800/hawk/internal/boostrap/database"
+	"github.com/beyond3800/hawk/internal/bootstrap/database"
 	"github.com/beyond3800/hawk/internal/console/migration"
 	"github.com/spf13/cobra"
 )

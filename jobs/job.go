@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	rdb "github.com/beyond3800/hawk/core/redis"
+	rdb "github.com/beyond3800/hawk/redis"
 )
 
 func Dispatch(queue string, payload interface{}) error{

@@ -2,8 +2,8 @@ package Migrations
 
 import (
 
-    "github.com/beyond3800/hawk/core/migration"
-	"github.com/beyond3800/hawk/core/database"
+    "github.com/beyond3800/hawk/migration"
+	"github.com/beyond3800/hawk/database"
 )
 
 type {{.Name}}Migration struct{}
@@ -13,7 +13,8 @@ func ({{.Name}} {{.Name}}Migration) Up() error {
         CREATE TABLE {{.TableName}} (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255),
-            email VARCHAR(255)
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )
     `)
 
