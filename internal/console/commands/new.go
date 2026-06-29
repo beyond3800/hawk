@@ -58,6 +58,7 @@ func createProject(projectName string) error {
 	cmd := exec.Command("go", "mod", "init", projectName)
 	cmd.Dir = projectName
 	if err := cmd.Run(); err != nil {
+		fmt.Println(err)
 		return err
 	}
 
