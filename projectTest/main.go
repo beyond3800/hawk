@@ -1,0 +1,18 @@
+package main
+
+import (
+	"os"
+
+	"github.com/beyond3800/hawk/bootstrap"
+	"projectTest/routes"
+)
+
+func main() {
+	bootstrap.Run()
+
+	app := routes.SetupRoutes()
+
+	port := os.Getenv("APP_PORT")
+
+	app.Run(port)
+}
