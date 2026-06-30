@@ -51,6 +51,9 @@ func createProject(projectName string) error {
 	if err := lib.MakeTemplate("app.go","app",projectName+"/bootstrap/",projectName); err != nil{
 		return err
 	}
+	if err := lib.MakeTemplate(".air.toml","air",projectName+"/",""); err != nil{
+		return err
+	}
 	createMigration("create_users_table",projectName+"/database/migrations")
 	createModel("user",projectName+"/app/Models")
 	createController("user",projectName+"/app/Http/Controllers")

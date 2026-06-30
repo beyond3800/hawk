@@ -19,7 +19,7 @@ var migrateCmd  = &cobra.Command{
 			fmt.Println("Error loading .env file")
 			return
 		}
-		migration.Scan()
+		fmt.Println("migrate cmd")
 		database.ConnectDatabase()
 		if err := migration.Run(); err != nil{
 			fmt.Println(err)

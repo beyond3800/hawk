@@ -6,7 +6,7 @@ testdata_dir = "testdata"
 tmp_dir = ".tmp"
 
 [build]
-  cmd = "go build -o .tmp/hawk.exe ./cmd/hawk"
+  cmd = "go build -o .tmp/main.exe ."
   entrypoint = ["./.tmp/hawk.exe", "serve"]
   delay = 1000
   exclude_dir = ["assets", ".tmp", "vendor", "testdata"]
