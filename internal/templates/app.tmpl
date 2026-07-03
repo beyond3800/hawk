@@ -10,7 +10,10 @@ import (
 
 func App() *hawk.Hawk {
 
+    Run()
     app := routes.SetupRoutes()
+	port := os.Getenv("APP_PORT")
 
+	app.Run(port)
     return app
 }

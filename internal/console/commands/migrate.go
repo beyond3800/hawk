@@ -1,11 +1,8 @@
 package commands
 
 import (
-	"fmt"
 
-	"github.com/beyond3800/hawk/internal/bootstrap/database"
-	"github.com/beyond3800/hawk/internal/console/migration"
-	"github.com/joho/godotenv"
+	"github.com/beyond3800/hawk/internal/bootstrap"
 	"github.com/spf13/cobra"
 )
 
@@ -14,18 +11,8 @@ import (
 var migrateCmd  = &cobra.Command{
 	Use: "migrate",
 	Short: "Migrate all table to database",
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := godotenv.Load(); err != nil{
-			fmt.Println("Error loading .env file")
-			return
-		}
-		fmt.Println("migrate cmd")
-		database.ConnectDatabase()
-		if err := migration.Run(); err != nil{
-			fmt.Println(err)
-			fmt.Println("Unable to migrate database")
-			return
-		}
+	RunE: func(cmd *cobra.Command, args []string) error{
+		return bootstrap.RunApp("hawk_migrate")
 	},
 }
 

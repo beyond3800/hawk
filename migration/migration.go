@@ -8,6 +8,5 @@ import (
 type Migration = internalMigration.Migration
 
 func Register(name string, m Migration) {
-	
 	internalMigration.Register(name, m)
 }
