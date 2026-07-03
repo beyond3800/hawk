@@ -2,18 +2,15 @@ package bootstrap
 
 import (
     _ "{{.Name}}/database/migrations"
-
+    "github.com/beyond3800/hawk/bootstrap"
     "{{.Name}}/routes"
-
+    
     "github.com/beyond3800/hawk/engine"
 )
 
 func App() *hawk.Hawk {
 
-    Run()
+    bootstrap.Run()
     app := routes.SetupRoutes()
-	port := os.Getenv("APP_PORT")
-
-	app.Run(port)
     return app
 }

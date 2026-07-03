@@ -22,4 +22,10 @@ func Execute(app *hawk.Hawk){
 		}
 
 	}
+	port := os.Getenv("APP_PORT")
+    if port == "" {
+        port = ":8080"
+    }
+
+    app.Run(port)
 }
