@@ -1,6 +1,7 @@
 package hawk
 
 import (
+	"fmt"
 	"os"
 
 	hawk "github.com/beyond3800/hawk/engine"
@@ -11,13 +12,23 @@ func Execute(app *hawk.Hawk){
 	if len(os.Args)> 1{
 		switch os.Args[1] {
 		case "hawk_migrate":
-			migration.Run()
+			if err :=migration.Run(); err != nil {
+				fmt.Println("Migration error:", err)
+				return
+			}
+			fmt.Println("Migration completed successfully")
 			return
 		case "hawk_rollback":
-			migration.Rollback()
+			if err :=migration.Rollback(); err != nil {
+				fmt.Println("Rollback error:", err)
+				return
+			}
 			return
 		case "hawk_status":
-			migration.Status()
+			if err :=migration.Status(); err != nil {
+				fmt.Println("Status error:", err)
+				return
+			}
 			return
 		}
 

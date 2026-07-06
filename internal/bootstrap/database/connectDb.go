@@ -21,7 +21,6 @@ func ConnectDatabase() error {
 		err != nil{
 			fmt.Println(err)
 		}
-		fmt.Println("db connected")
 	}
 	return nil
 }

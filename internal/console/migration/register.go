@@ -88,10 +88,12 @@ func Run() error {
 			continue
 		}
 		if err := migration.M.Up(); err != nil {
-			migrationHappen = true
 			return err
 		}
-		saveMigration(migration.Name,batch)
+		if err := saveMigration(migration.Name,batch); err != nil {
+			return err
+		}
+		migrationHappen = true
 	}
 	if migrationHappen{
 		fmt.Println("Database migrated successfully")
