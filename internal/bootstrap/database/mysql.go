@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	db       *sql.DB
+	DB       *sql.DB
 	once     sync.Once
 )
 
@@ -27,18 +27,18 @@ func connectMySQL(config Config) error {
 			config.Database,
 		)
 
-		db, connectErr = sql.Open("mysql", dsn)
+		DB, connectErr = sql.Open("mysql", dsn)
 		if connectErr != nil {
 			connectErr = fmt.Errorf("failed to connect to database: %w", connectErr)
 			return
 		}
 
-		if connectErr = db.Ping(); connectErr != nil {
+		if connectErr = DB.Ping(); connectErr != nil {
 			connectErr = fmt.Errorf("database unreachable: %w", connectErr)
 			return
 		}
 		database.SetInstance(&database.DB{
-			Conn: db,
+			Conn: DB,
 		})
 
 	})

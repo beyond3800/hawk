@@ -4,14 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joho/godotenv"
 )
 
 func ConnectDatabase() error {
-	var err error
-	if err = godotenv.Load(); err != nil {
-		return fmt.Errorf("Error loading .env file: %v", err)
-	}
 	
 	driver := os.Getenv("DB_DRIVER")
 	switch driver {

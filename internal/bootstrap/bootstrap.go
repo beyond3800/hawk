@@ -6,9 +6,13 @@ import (
 	"strings"
 
 	"github.com/beyond3800/hawk/internal/bootstrap/database"
+	"github.com/joho/godotenv"
 )
 
 func Bootstrap() {
+    if err := godotenv.Load(); err != nil {
+        fmt.Println("Warning:", err)
+    }
     dbEnable := os.Getenv("DB_ENABLED")
     redisEnabled := os.Getenv("REDIS_ENABLED")
     if strings.ToLower(dbEnable) == "true" {
