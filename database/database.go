@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 )
 
 
@@ -12,6 +13,7 @@ type DB struct {
 var instance *DB
 
 func SetInstance(db *DB) {
+	fmt.Println(db)
 	if instance != nil {
 		instance = db
 	}
