@@ -12,7 +12,10 @@ type DB struct {
 var instance *DB
 
 func SetInstance(db *DB) {
-	instance = db
+	if instance != nil {
+		instance = db
+	}
+	
 }
 
 func HawkDB() *DB {
