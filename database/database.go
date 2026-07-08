@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"database/sql"
 )
 
@@ -14,7 +13,6 @@ var instance *DB
 
 func SetInstance(db *DB) {
 	instance = db
-	fmt.Println(instance)
 }
 
 func HawkDB() *DB {
