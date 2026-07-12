@@ -13,10 +13,11 @@ type DB struct {
 var instance *DB
 
 func SetInstance(db *DB) {
-	fmt.Println(db)
-	if instance != nil {
-		instance = db
-	}
+	if db == nil {
+        fmt.Println("attempted to register a nil database instance")
+    }
+
+    instance = db
 	
 }
 

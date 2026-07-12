@@ -64,10 +64,8 @@ You may use:
 ## Inserting Records
 
 ```go
-database.Table("users").Insert(map[string]any{
-    "name":  "Adam",
-    "email": "adam@example.com",
-})
+insert using a struck
+database.Table("users").Insert(&user)
 ```
 
 ---

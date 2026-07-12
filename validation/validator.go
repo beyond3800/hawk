@@ -66,6 +66,7 @@ func Validate(data any) (errors, error) {
         val = val.Elem()
     }
     if val.Kind() != reflect.Struct{
+        
     }
     structType := val.Type()
     for i := 0; i < structType.NumField(); i++ {

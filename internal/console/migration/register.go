@@ -50,10 +50,8 @@ func nextBatch ()(int, error){
 }
 
 func saveMigration (migration string, batch int) error{
-	_,err :=database.HawkDB().Table("migrations").Insert(map[string]any{
-		"migration":migration,
-		"batch":batch,
-	})
+	query := "INSERT INTO migrations (migration, batch) VALUE(?, ?)"
+	_,err :=database.HawkDB().Conn.Exec(query, migration, batch)
 	if err != nil{
 		return err
 	}

@@ -3,6 +3,7 @@ package hawk
 // Don't edit or add anything here
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/beyond3800/hawk/validation"
@@ -10,7 +11,11 @@ import (
 
 // context
 func (c *Context) BindJSON(obj any) error{
-	return json.NewDecoder(c.Request.Body).Decode(obj)
+    err := json.NewDecoder(c.Request.Body).Decode(obj)
+    if err != nil{
+        return fmt.Errorf("Unable to bind data")
+    }
+	return nil
 }
 func (c *Context) BindAndValidate(obj any) error {
     
@@ -55,6 +60,10 @@ func (c *Context) Status(code int) {
 func (c *Context) Abort(){
 	c.index = len(c.handlers) 
 }
+func (c *Context) AbortWithError(status int, err error){
+    c.JSON(status, err)
+    c.Abort()
+}
 func (c *Context) Next() {
     c.index++
 
@@ -64,7 +73,7 @@ func (c *Context) Next() {
     }
 }
 func (c *Context) ValidationError(err any) {
-    c.JSON(http.StatusUnprocessableEntity, map[string]any{
+    c.JSON(http.StatusUnprocessableEntity, H{
         "message": "validation failed",
         "errors":  err,
     })

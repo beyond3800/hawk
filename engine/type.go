@@ -46,14 +46,14 @@ type CorsConfig struct{
 }
 
 type ErrorResponse struct {
-    Error   string `json:"error"`
-    Message string `json:"message"`
-    Code    int    `json:"code"`
+    Error    string `json:"error"`
+    Message  any    `json:"message"`
+    Code     int    `json:"code"`
 }
 type SuccessResponse struct {
-    Success   string `json:"success"`
-    Message string `json:"message"`
-    Code    int    `json:"code"`
+    Success   string  `json:"success"`
+    Message   any     `json:"message"`
+    Code      int     `json:"code"`
 }
 func match(pattern, path string) (bool, map[string]string) {
     params := make(map[string]string)

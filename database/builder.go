@@ -15,7 +15,7 @@ type Builder struct {
 	limit    int
 	orMode   bool
 	orderBy  string
-	inserts  map[string]any
+	inserts  any
 }
 func (db *DB) Table(name string) *Builder {
 	return &Builder{
@@ -53,7 +53,7 @@ func (b *Builder) First(dest any) error {
 
     rows, err := HawkDB().Conn.Query(query, args...)
 	if err != nil {
-		return err
+		return MySqlErrorFormat(err)
 	}
 
 	defer rows.Close()
@@ -100,7 +100,7 @@ func (b *Builder) Get(dest any) error {
 
 	rows, err := HawkDB().Conn.Query(query, args...)
 	if err != nil {
-		return err
+		return MySqlErrorFormat(err)
 	}
 	defer rows.Close()
 
@@ -154,28 +154,39 @@ func (b *Builder) OrderBy(column, direction string) *Builder {
     b.orderBy = fmt.Sprintf("%s %s", column, direction)
     return b
 }
-func (b *Builder) Insert(data map[string]any) (sql.Result, error) {
+func (b *Builder) Insert(data any) (sql.Result, error) {
 
     b.inserts = data
 
     keys := []string{}
     placeholders := []string{}
     values := []any{}
-
-    for k, v := range data {
-        keys = append(keys, k)
-        placeholders = append(placeholders, "?")
-        values = append(values, v)
+    
+	val := reflect.ValueOf(data)
+	if val.Kind() == reflect.Ptr{
+        val = val.Elem()
     }
-
+	structType := val.Type()
+	for i := 0; i < structType.NumField(); i++ {
+        field := structType.Field(i)
+		fieldRequired := field.Tag.Get("validate")
+		requiredSlice := strings.Split(fieldRequired, "|")
+		for _,v := range requiredSlice{
+			if v == "required"{
+				keys = append(keys, field.Tag.Get("db"))
+				placeholders = append(placeholders, "?")
+				values = append(values, val.Field(i).Interface())
+			}
+		}
+	}
     query := fmt.Sprintf(
         "INSERT INTO %s (%s) VALUES (%s)",
         b.table,
         strings.Join(keys, ", "),
         strings.Join(placeholders, ", "),
     )
-
-    return HawkDB().Conn.Exec(query, values...)
+	result, sqlErr := HawkDB().Conn.Exec(query, values...)
+    return result, MySqlErrorFormat(sqlErr)
 }
 func (b *Builder) Update(data map[string]any) (sql.Result, error) {
 
@@ -199,7 +210,8 @@ func (b *Builder) Update(data map[string]any) (sql.Result, error) {
 
     values = append(values, b.bindings...)
 
-    return HawkDB().Conn.Exec(query, values...)
+    result, sqlErr := HawkDB().Conn.Exec(query, values...)
+    return result, MySqlErrorFormat(sqlErr)
 }
 func (b *Builder) Delete() (sql.Result, error) {
 
@@ -209,5 +221,6 @@ func (b *Builder) Delete() (sql.Result, error) {
         query += " WHERE " + strings.Join(b.wheres, " AND ")
     }
 
-    return HawkDB().Conn.Exec(query, b.bindings...)
+	result, sqlErr := HawkDB().Conn.Exec(query, b.bindings...)
+    return result, MySqlErrorFormat(sqlErr)
 }
