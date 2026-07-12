@@ -14,7 +14,7 @@ type Claims struct {
 }
 
 func CreateToken(userID string, expiresIn time.Duration) (string, error) {
-	if len(cgf.SecretKey) == 0 {
+	if authConfig.SecretKey == "" {
 		return "", fmt.Errorf("auth package has not been initialized")
 	}
 
@@ -25,7 +25,7 @@ func CreateToken(userID string, expiresIn time.Duration) (string, error) {
 		RegisteredClaims: jwt.RegisteredClaims{
 			ID:        id.New(),
 			Subject:   userID,
-			Issuer:    cgf.Issuer,
+			Issuer:    authConfig.Issuer,
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(now.Add(expiresIn)),
@@ -34,5 +34,5 @@ func CreateToken(userID string, expiresIn time.Duration) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	return token.SignedString([]byte(cgf.SecretKey))
+	return token.SignedString([]byte(authConfig.SecretKey))
 }

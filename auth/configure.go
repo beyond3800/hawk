@@ -2,13 +2,13 @@ package auth
 
 import "errors"
 
-var cgf Config
+var authConfig Config
 
 func Configure(config Config) error {
 	if config.SecretKey == "" {
 		return errors.New("auth: secret key cannot be empty")
 	}
-	cgf = config
+	authConfig = config
 
 	return nil
 }

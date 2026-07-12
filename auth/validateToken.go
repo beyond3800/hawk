@@ -18,7 +18,7 @@ func ValidateToken(tokenStr string) (*Claims, error) {
                 return nil, fmt.Errorf("unexpected signing method")
             }
 
-            return cgf.SecretKey, nil
+            return authConfig.SecretKey, nil
         },
     )
 

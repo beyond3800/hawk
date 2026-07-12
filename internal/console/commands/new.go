@@ -6,12 +6,10 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/beyond3800/hawk/auth"
 	"github.com/beyond3800/hawk/lib"
 	"github.com/beyond3800/hawk/util"
 	"github.com/spf13/cobra"
 )
-
 
 func createProject(projectName string) error {
 
@@ -41,7 +39,11 @@ func createProject(projectName string) error {
 			return err
 		}
 	}
-	if err := lib.MakeTemplate(".env","env",projectName+"/",projectName); err != nil{
+	secretKey, err := util.GenerateSecret()
+	if err != nil {
+		return fmt.Errorf("Error generating secret key: %w", err)
+	}
+	if err := lib.MakeEnvTemplate(".env","env",projectName+"/",projectName,secretKey); err != nil{
 		return err
 	}
 	if err := lib.MakeTemplate("main.go","main",projectName+"/",projectName); err != nil{
@@ -104,17 +106,7 @@ func installAir() {
 
     fmt.Println("Air installed successfully.")
 }
-func initAuth(appName string) {
-	secretKey, err := util.GenerateSecret()
-	if err != nil {
-		fmt.Println("Error generating secret key:", err)
-		return
-	}
-	auth.Init(auth.Config{
-		SecretKey: secretKey,
-		Issuer:    appName,
-	})
-}
+
 
 var newCmd = &cobra.Command{
 	Use:   "new [projectName]",
@@ -133,7 +125,6 @@ var newCmd = &cobra.Command{
 			fmt.Println("Error:", err)
 			return
 		}
-		initAuth(projectName)
 		installAir()
 		fmt.Println("Project created successfully:", projectName)
 	},
