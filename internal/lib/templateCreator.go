@@ -143,7 +143,7 @@ func MakeTemplate(name string, templateName string, path string, data string) er
 		Name string
 	}
 	
-	templateContent := fmt.Sprintf("%s.tmpl", strings.ToLower(templateName))
+	templateContent := fmt.Sprintf("%s.tmpl", templateName)
 	tmpl, err := template.ParseFS(
 		templates.Files,
 		templateContent,
