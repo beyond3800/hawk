@@ -7,7 +7,6 @@ import (
 	"strings"
 	"text/template"
 
-	// "github.com/beyond3800/hawk/auth"
 	"github.com/beyond3800/hawk/internal/templates"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -50,7 +49,7 @@ func GenerateTemplate(name string, templateName string, path string) error {
 	name = caser.String(name)
 
 	// Fill in the template and write the file
-	shortName := name[:1]
+	shortName := strings.ToLower(name[:1])
 	data :=  templateDatas{Name:name,ShortName: shortName}
 	return tmpl.Execute(file, data)
 }
@@ -166,30 +165,4 @@ func MakeTemplate(name string, templateName string, path string, data string) er
 	return tmpl.Execute(file, datas)
 }
 
-func MakeEnvTemplate(name string, templateName string, path string, data string, generatedSecret string) error{
-	type templateDatas struct{
-		Name string
-		GeneratedSecret string
-	}
-	
-	templateContent := fmt.Sprintf("%s.tmpl", strings.ToLower(templateName))
-	tmpl, err := template.ParseFS(
-		templates.Files,
-		templateContent,
-	)
-	if err != nil {
-		return err
-	}
 
-	fileName := filepath.Join(
-		path,
-		name,
-	)
-	file, err := os.Create(fileName)
-	if err != nil {
-		return fmt.Errorf("failed to create file: %w", err)
-	}
-	defer file.Close()
-	datas :=  templateDatas{Name:data, GeneratedSecret:generatedSecret }
-	return tmpl.Execute(file, datas)
-}

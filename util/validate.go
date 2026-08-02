@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/beyond3800/hawk/lib"
+	"github.com/beyond3800/hawk/internal/lib"
 	_ "golang.org/x/text/cases"
 )
 

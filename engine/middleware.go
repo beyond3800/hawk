@@ -3,6 +3,7 @@ package hawk
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -35,61 +36,130 @@ func Recovery(c *Context) {
 }
 
 func Cors(config CorsConfig) HandlerFunc {
-    return func(c *Context) {
 
-        requestOrigin := c.Request.Header.Get("Origin")
+	// Defaults
+	if len(config.AllowMethods) == 0 {
+		config.AllowMethods = []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+			http.MethodOptions,
+		}
+	}
 
+	if len(config.AllowHeaders) == 0 {
+		config.AllowHeaders = []string{
+			"Origin",
+			"Content-Type",
+			"Accept",
+			"Authorization",
+		}
+	}
 
-        if len(config.AllowOrigins) > 0 {
+	if config.MaxAge == 0 {
+		config.MaxAge = 12 * time.Hour
+	}
 
-            if requestOrigin != "" && requestOrigin != config.AllowOrigins[0] {
+	// Invalid configuration
+	if config.AllowCredentials &&
+		len(config.AllowOrigins) == 1 &&
+		config.AllowOrigins[0] == "*" {
+		panic("cors: AllowCredentials cannot be true when AllowOrigins contains '*'")
+	}
 
-                c.JSON(http.StatusForbidden, map[string]string{
-                    "error": "origin not allowed",
-                })
+	return func(c *Context) {
 
-                c.Abort()
-                return
-            }
-        }
+		origin := c.Request.Header.Get("Origin")
 
-        if requestOrigin != "" {
-            c.Response.Header().Set(
-                "Access-Control-Allow-Origin",
-                requestOrigin,
-            )
-        }
+		if origin == "" {
+			c.Next()
+			return
+		}
 
-        c.Response.Header().Set(
-            "Access-Control-Allow-Methods",
-            strings.Join(config.AllowMethods, ", "),
-        )
+		allowed := false
+		allowAll := false
 
-        c.Response.Header().Set(
-            "Access-Control-Allow-Headers",
-            strings.Join(config.AllowHeaders, ", "),
-        )
+		for _, o := range config.AllowOrigins {
 
-        if config.AllowCredentials {
-            c.Response.Header().Set(
-                "Access-Control-Allow-Credentials",
-                "true",
-            )
-        }
+			if o == "*" {
+				allowAll = true
+				allowed = true
+				break
+			}
 
-        if len(config.ExposeHeaders) > 0 {
-            c.Response.Header().Set(
-                "Access-Control-Expose-Headers",
-                strings.Join(config.ExposeHeaders, ", "),
-            )
-        }
+			if o == origin {
+				allowed = true
+				break
+			}
+		}
 
-        if c.Request.Method == http.MethodOptions {
-            c.Status(http.StatusNoContent)
-            c.Abort()
-            return
-        }
+		if !allowed {
+			c.Status(http.StatusForbidden)
+			c.Abort()
+			return
+		}
 
-        c.Next()
-    }
+		// Allow Origin
+		if allowAll {
+			c.Response.Header().Set(
+				"Access-Control-Allow-Origin",
+				"*",
+			)
+		} else {
+			c.Response.Header().Set(
+				"Access-Control-Allow-Origin",
+				origin,
+			)
+
+			c.Response.Header().Set(
+				"Vary",
+				"Origin",
+			)
+		}
+
+		// Methods
+		c.Response.Header().Set(
+			"Access-Control-Allow-Methods",
+			strings.Join(config.AllowMethods, ", "),
+		)
+
+		// Headers
+		c.Response.Header().Set(
+			"Access-Control-Allow-Headers",
+			strings.Join(config.AllowHeaders, ", "),
+		)
+
+		// Exposed Headers
+		if len(config.ExposeHeaders) > 0 {
+			c.Response.Header().Set(
+				"Access-Control-Expose-Headers",
+				strings.Join(config.ExposeHeaders, ", "),
+			)
+		}
+
+		// Credentials
+		if config.AllowCredentials {
+			c.Response.Header().Set(
+				"Access-Control-Allow-Credentials",
+				"true",
+			)
+		}
+
+		// Max Age
+		c.Response.Header().Set(
+			"Access-Control-Max-Age",
+			strconv.Itoa(int(config.MaxAge.Seconds())),
+		)
+
+		// Preflight
+		if c.Request.Method == http.MethodOptions {
+			c.Status(http.StatusNoContent)
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
 }

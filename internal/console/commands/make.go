@@ -6,9 +6,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var make = &cobra.Command{
+var makeCmd = &cobra.Command{
 	Use: "make",
-	Short: `make controller
+	Short: `
+	make controller
 	make model [name] 
 	make service [name] 
 	make repository [name]
@@ -34,5 +35,5 @@ var make = &cobra.Command{
 }
 
 func MakeCommand() *cobra.Command {
-	return make
+	return makeCmd
 }

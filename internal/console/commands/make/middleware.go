@@ -1,10 +1,10 @@
-package commands
+package Make
 
 import (
 	"fmt"
 	"os"
 
-	"github.com/beyond3800/hawk/lib"
+	"github.com/beyond3800/hawk/internal/lib"
 	"github.com/spf13/cobra"
 )
 

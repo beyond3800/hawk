@@ -2,21 +2,27 @@ package database
 
 import (
 	"fmt"
-	"os"
 
+	"github.com/beyond3800/hawk/internal/env"
 )
 
 func ConnectDatabase() error {
 	
-	driver := os.Getenv("DB_DRIVER")
+	host,_ := env.Get("DB_HOST")
+	port,_ := env.Get("DB_PORT")
+	user,_ := env.Get("DB_USER")
+	pwd,_ := env.Get("DB_PASS")
+	name,_ := env.Get("DB_NAME")
+	driver,_ := env.Get("DB_DRIVER")
+
 	switch driver {
 	case "mysql":
 		if err := connectMySQL(Config{
-				os.Getenv("DB_HOST"),
-				os.Getenv("DB_PORT"),
-				os.Getenv("DB_USER"),
-				os.Getenv("DB_PASS"),
-				os.Getenv("DB_NAME"),
+				host,
+				port,
+				user,
+				pwd,
+				name,
 			});
 		err != nil{
 			fmt.Println(err)

@@ -17,12 +17,14 @@ type Hawk struct {
 	routes     []Route
 	middleware []HandlerFunc
 }
+
 type RouterGroup struct {
     prefix      string
     parent      *RouterGroup
     engine      *Hawk
-	handler  []HandlerFunc
+	middleware  []HandlerFunc
 }
+
 type Context struct {
 	Response  http.ResponseWriter
 	Request  *http.Request
@@ -50,11 +52,13 @@ type ErrorResponse struct {
     Message  any    `json:"message"`
     Code     int    `json:"code"`
 }
+
 type SuccessResponse struct {
     Success   string  `json:"success"`
     Message   any     `json:"message"`
     Code      int     `json:"code"`
 }
+
 func match(pattern, path string) (bool, map[string]string) {
     params := make(map[string]string)
 

@@ -1,0 +1,25 @@
+package console
+
+import (
+	"log"
+	"os"
+
+	"github.com/beyond3800/hawk"
+)
+
+func Execute(app *hawk.Hawk) {
+
+	if len(os.Args) > 1 {
+
+		if command, ok := commands[os.Args[1]]; ok {
+
+			if err := command(); err != nil {
+				log.Fatal(err)
+			}
+
+			return
+		}
+	}
+
+	hawk.Execute(app)
+}

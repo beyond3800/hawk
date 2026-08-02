@@ -1,0 +1,11 @@
+package console
+
+import "{{.Name}}/database/seeders"
+
+func init() {
+	Register("db:seed", Seed)
+}
+
+func Seed() error {
+	return seeders.DatabaseSeeder{}.Run()
+}

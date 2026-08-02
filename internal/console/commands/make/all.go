@@ -1,4 +1,4 @@
-package commands
+package Make
 
 import "github.com/spf13/cobra"
 

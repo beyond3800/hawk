@@ -32,7 +32,10 @@ func BatchMigrations(batch int) ([]string, error) {
 	}
 
 	defer rows.Close()
-
+	
+	if rows.Err() != nil{
+		return  nil, rows.Err()
+	}
 	var names []string
 
 	for rows.Next() {

@@ -6,8 +6,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/beyond3800/hawk/lib"
-	"github.com/beyond3800/hawk/util"
+	Make "github.com/beyond3800/hawk/internal/console/commands/make"
+	"github.com/beyond3800/hawk/internal/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -17,21 +17,33 @@ func createProject(projectName string) error {
 	dirs := []string{
 		projectName,
 
-		filepath.Join(projectName, "app/Models"),
-
+		// Creating the root-level directories
+		filepath.Join(projectName, "app"),
 		filepath.Join(projectName, "bootstrap"),
+		filepath.Join(projectName, "config"),
+		filepath.Join(projectName, "database"),
+		filepath.Join(projectName, "routes"),	
+		filepath.Join(projectName, "bootstrap"),
+		filepath.Join(projectName, "routes"),
+		filepath.Join(projectName, "config"),
+		filepath.Join(projectName, "internal"),
+		filepath.Join(projectName, "console"),
+
+		
+		// Creating the app directory and its subdirectories
+		filepath.Join(projectName, "app/Models"),
 
 		filepath.Join(projectName, "app/Http/Controllers"),
 		filepath.Join(projectName, "app/Http/Middleware"),
 		filepath.Join(projectName, "app/Http/Repository"),
 		filepath.Join(projectName, "app/Http/Services"),
 
+		// Creating the database directory and its subdirectories
 		filepath.Join(projectName, "database/migrations"),
 		filepath.Join(projectName, "database/seeders"),
 		filepath.Join(projectName, "database/factory"),
 		
-		filepath.Join(projectName, "routes"),
-		filepath.Join(projectName, "config"),
+		filepath.Join(projectName, "internal/console"),
 	}
 
 	for _, dir := range dirs {
@@ -39,11 +51,8 @@ func createProject(projectName string) error {
 			return err
 		}
 	}
-	secretKey, err := util.GenerateSecret()
-	if err != nil {
-		return fmt.Errorf("Error generating secret key: %w", err)
-	}
-	if err := lib.MakeEnvTemplate(".env","env",projectName+"/",projectName,secretKey); err != nil{
+
+	if err := lib.MakeTemplate(".env","env",projectName+"/",projectName); err != nil{
 		return err
 	}
 	if err := lib.MakeTemplate("main.go","main",projectName+"/",projectName); err != nil{
@@ -58,9 +67,24 @@ func createProject(projectName string) error {
 	if err := lib.MakeTemplate(".air.toml","air",projectName+"/",""); err != nil{
 		return err
 	}
-	createMigration("create_users_table",projectName+"/database/migrations")
-	createModel("user",projectName+"/app/Models")
-	createController("user",projectName+"/app/Http/Controllers")
+	if err := lib.MakeTemplate("databaseSeeder.go","databaseSeeder",projectName+"/database/seeders/",projectName); err != nil{
+		return err
+	}
+
+	if err := lib.MakeTemplate("execute.go","execute",projectName+"/interenal",""); err != nil{
+		return err
+	}
+	if err := lib.MakeTemplate("commands.go","commands",projectName+"/interenal",""); err != nil{
+		return err
+	}
+	// console/
+    // execute.go
+    // commands.go
+    // seed.go
+    // queue.go
+	Make.CreateMigration("create_users_table",projectName+"/database/migrations")
+	Make.CreateModel("user",projectName+"/app/Models")
+	Make.CreateController("user",projectName+"/app/Http/Controllers")
 
 	cmd := exec.Command("go", "mod", "init", projectName)
 	cmd.Dir = projectName

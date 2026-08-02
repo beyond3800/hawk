@@ -8,38 +8,71 @@ import (
 
 type H map[string]any
 
-func (h *Hawk) ServeHTTP(response http.ResponseWriter, request *http.Request) {
-    for _, route := range h.routes {
+func (h *Hawk) ServeHTTP(
+	response http.ResponseWriter,
+	request *http.Request,
+) {
 
-        if route.Method != request.Method {
-            continue
-        }
+	c := &Context{
+		Response: response,
+		Request: request,
+		index: -1,
+	}
 
-		handlers := make([]HandlerFunc,0)
-		handlers = append(handlers, h.middleware...)
-		handlers = append(handlers, route.Handler...)
+	handlers := append(
+		[]HandlerFunc{},
+		h.middleware...,
+	)
 
-		matched, params := match(route.Pattern, request.URL.Path)
-        if matched {
-            c := &Context{
-                Response: response,
-                Request: request,
-				params: params,
-				handlers: handlers,
-				index: -1,
-            }
+	handlers = append(
+		handlers,
+		h.router(),
+	)
 
-			c.startTime = time.Now()
-            c.Next()
-            return
-        }
-    }
+	c.handlers = handlers
 
-    http.NotFound(response, request)
+	c.startTime = time.Now()
+
+	c.Next()
 }
+func (h *Hawk) router() HandlerFunc {
 
+	return func(c *Context) {
+
+		for _, route := range h.routes {
+
+			if route.Method != c.Request.Method {
+				continue
+			}
+
+			matched, params := match(
+				route.Pattern,
+				c.Request.URL.Path,
+			)
+
+			if !matched {
+				continue
+			}
+
+			c.params = params
+
+			// Route middleware + controller
+			c.ReplaceHandlers(route.Handler...)
+
+			c.Next()
+
+			return
+		}
+
+		http.NotFound(c.Response, c.Request)
+	}
+}
 func (h *Hawk) Use(handler ...HandlerFunc){
 	h.middleware = append(h.middleware, handler...)
+}
+
+func (g *RouterGroup) Use(handler HandlerFunc){
+    g.middleware = append(g.middleware, handler)
 }
 
 func (h *Hawk) Run(port string) error {
@@ -48,9 +81,6 @@ func (h *Hawk) Run(port string) error {
 	return http.ListenAndServe(port, h)
 }
 
-func (g *RouterGroup) Use(handler HandlerFunc){
-	g.handler = append(g.handler, handler)
-}
 
 func New() *Hawk {
     return &Hawk{

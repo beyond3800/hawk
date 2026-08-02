@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
 )
 
 type Builder struct {
+	db	     *DB
 	table    string
 	columns  []string
 	wheres   []string
@@ -16,11 +18,68 @@ type Builder struct {
 	orMode   bool
 	orderBy  string
 	inserts  any
+	offset   int
+
+	perPage  int
+	page     int
+
+	tx	     *sql.Tx
 }
+func (b *Builder) query(query string, args ...any) (*sql.Rows, error) {
+	if b.tx != nil {
+		return b.tx.Query(query, args...)
+	}
+
+	return b.db.Conn.Query(query, args...)
+}
+func (b *Builder) queryRow(query string, args ...any) *sql.Row {
+	if b.tx != nil {
+		return b.tx.QueryRow(query, args...)
+	}
+
+	return b.db.Conn.QueryRow(query, args...)
+}
+
+func (b *Builder) exec(query string, args ...any) (sql.Result, error) {
+	if b.tx != nil {
+		return b.tx.Exec(query, args...)
+	}
+
+	return b.db.Conn.Exec(query, args...)
+}
+
 func (db *DB) Table(name string) *Builder {
 	return &Builder{
+		db: db,
 		table: name,
 	}
+}
+func (b *Builder) Table(name string) *Builder {
+	return &Builder{
+		db:    b.db,
+		tx:    b.tx,
+		table: name,
+	}
+}
+func (db *DB) Transaction(fn func(bd *Builder) error) error {
+	tx, err := db.Conn.Begin()
+	if err != nil {
+		return err
+	}
+
+	builder := &Builder{
+		db: db,
+		tx: tx,
+	}
+
+	if err := fn(builder); err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return fmt.Errorf("transaction error: %v, rollback error: %v", err, rbErr)
+		}
+		return err
+	}
+
+	return tx.Commit()
 }
 
 func (b *Builder) Select(columns ...string) *Builder {
@@ -51,7 +110,7 @@ func (b *Builder) First(dest any) error {
 
     query, args := b.ToSQL()
 
-    rows, err := HawkDB().Conn.Query(query, args...)
+    rows, err := b.query(query, args...)
 	if err != nil {
 		return MySqlErrorFormat(err)
 	}
@@ -92,13 +151,16 @@ func (b *Builder) ToSQL() (string, []any) {
 			b.limit,
 		)
 	}
+	if b.offset > 0 {
+		query += fmt.Sprintf(" OFFSET %d", b.offset)
+	}
 	return query, b.bindings
 }
 func (b *Builder) Get(dest any) error {
 
 	query, args := b.ToSQL()
 
-	rows, err := HawkDB().Conn.Query(query, args...)
+	rows, err := b.query(query, args...)
 	if err != nil {
 		return MySqlErrorFormat(err)
 	}
@@ -169,15 +231,15 @@ func (b *Builder) Insert(data any) (sql.Result, error) {
 	structType := val.Type()
 	for i := 0; i < structType.NumField(); i++ {
         field := structType.Field(i)
-		fieldRequired := field.Tag.Get("validate")
-		requiredSlice := strings.Split(fieldRequired, "|")
-		for _,v := range requiredSlice{
-			if v == "required"{
+		// fieldRequired := field.Tag.Get("validate")
+		// requiredSlice := strings.Split(fieldRequired, "|")
+		// for _,v := range requiredSlice{
+		// 	if v == "required"{
 				keys = append(keys, field.Tag.Get("db"))
 				placeholders = append(placeholders, "?")
 				values = append(values, val.Field(i).Interface())
-			}
-		}
+		// 	}
+		// }
 	}
     query := fmt.Sprintf(
         "INSERT INTO %s (%s) VALUES (%s)",
@@ -185,7 +247,7 @@ func (b *Builder) Insert(data any) (sql.Result, error) {
         strings.Join(keys, ", "),
         strings.Join(placeholders, ", "),
     )
-	result, sqlErr := HawkDB().Conn.Exec(query, values...)
+	result, sqlErr := b.exec(query, values...)
     return result, MySqlErrorFormat(sqlErr)
 }
 func (b *Builder) Update(data map[string]any) (sql.Result, error) {
@@ -210,7 +272,7 @@ func (b *Builder) Update(data map[string]any) (sql.Result, error) {
 
     values = append(values, b.bindings...)
 
-    result, sqlErr := HawkDB().Conn.Exec(query, values...)
+    result, sqlErr := b.exec(query, values...)
     return result, MySqlErrorFormat(sqlErr)
 }
 func (b *Builder) Delete() (sql.Result, error) {
@@ -221,6 +283,82 @@ func (b *Builder) Delete() (sql.Result, error) {
         query += " WHERE " + strings.Join(b.wheres, " AND ")
     }
 
-	result, sqlErr := HawkDB().Conn.Exec(query, b.bindings...)
+	result, sqlErr := b.exec(query, b.bindings...)
     return result, MySqlErrorFormat(sqlErr)
+}
+func (b *Builder) Count() (int, error) {
+
+	var count int
+
+	query := fmt.Sprintf(
+		"SELECT COUNT(*) FROM %s",
+		b.table,
+	)
+
+	if len(b.wheres) > 0 {
+		query += " WHERE " + strings.Join(b.wheres, " AND ")
+	}
+
+	err := b.queryRow(query, b.bindings...).Scan(&count)
+	if err != nil {
+		return 0, MySqlErrorFormat(err)
+	}
+
+	return count, nil
+}
+
+func (b *Builder) Offset(offset int) *Builder{
+	b.offset = offset
+	return b
+}
+func (b *Builder) Page(page int) *Builder{
+	b.page = page
+	return b
+}
+func (b *Builder) PerPage(perPage int) *Builder{
+	b.perPage = perPage
+	return b
+}
+func (b *Builder) Paginate(page, perPage int, dest any) (*Pagination, error) {
+
+	if page < 1 {
+		page = 1
+	}
+
+	if perPage < 1 {
+		perPage = 15
+	}
+
+	countBuilder := b.Table(b.table)
+	countBuilder.wheres = append([]string{}, b.wheres...)
+	countBuilder.bindings = append([]any{}, b.bindings...)
+
+	total, err := countBuilder.Count()
+	if err != nil {
+		return nil, err
+	}
+
+	b.page = page
+	b.perPage = perPage
+	b.limit = perPage
+	b.offset = (page - 1) * perPage
+
+	if err := b.Get(dest); err != nil {
+		return nil, err
+	}
+
+	lastPage := total / perPage
+	if total%perPage != 0 {
+		lastPage++
+	}
+
+	return &Pagination{
+		Data: dest,
+		Meta: Meta{
+			Page: page,
+			PerPage: perPage,
+			Total: total,
+			LastPage: lastPage,
+		},
+	}, nil
 }

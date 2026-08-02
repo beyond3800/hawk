@@ -1,0 +1,48 @@
+package resources
+
+import (
+	"{{.AppName}}/app/Models"
+
+	"github.com/beyond3800/hawk/engine"
+)
+
+type {{.Name}}Resource struct {
+	{{.SmallLetter}} Models.{{.Name}}
+}
+type {{.Name}}Collection struct {
+	{{.SmallLetter}} []Models.{{.Name}}
+}
+
+func (r {{.Name}}Resource) ToMap() hawk.H {
+
+	return hawk.H{
+	//	"id":    r.{{.SmallLetter}}.ID,
+	//	"name":  r.{{.SmallLetter}}.Name,
+	}
+
+}
+
+func (c {{.Name}}Collection) ToSlice() []hawk.H {
+	result := make([]hawk.H, 0, len(c.{{.SmallLetter}}))
+
+	for _, item := range c.{{.SmallLetter}} {
+		result = append(result, {{.Name}}Resource{
+			{{.SmallLetter}}: item,
+		}.ToMap())
+		
+	}
+
+	return result
+}
+
+func {{ .Name }}(data Models.{{.Name}}) {{.Name}}Resource{
+	return {{.Name}}Resource{
+		{{ .SmallLetter }}: data,
+	}
+}
+
+func {{ .PluralName }}(datas []Models.{{.Name}}) {{.Name}}Collection{
+	return {{.Name}}Collection{
+		{{ .SmallLetter }}: datas,
+	}
+}

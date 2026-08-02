@@ -1,17 +1,17 @@
-package commands
+package Make
 
 import (
 	"fmt"
 	"os"
 	"strings"
 
-	"github.com/beyond3800/hawk/lib"
+	"github.com/beyond3800/hawk/internal/lib"
 	"github.com/spf13/cobra"
 )
 
 
 
-func createController(name string, dir string)  {
+func CreateController(name string, dir string)  {
 	// var content string
 	// if isApi{
 		// fmt.Println("you are creating an api controller")
@@ -59,7 +59,7 @@ var controller = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		dir := "app/Http/Controllers"
 		name:=args[0]
-		createController(name, dir)
+		CreateController(name, dir)
 	},
 }
 func ControllerCommand() *cobra.Command {

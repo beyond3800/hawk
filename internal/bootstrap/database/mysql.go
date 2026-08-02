@@ -17,7 +17,6 @@ var (
 func connectMySQL(config Config) error {
 	var connectErr error
 	once.Do(func() {
-
 		dsn := fmt.Sprintf(
 			"%s:%s@tcp(%s:%s)/%s?parseTime=true",
 			config.User,

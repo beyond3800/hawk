@@ -1,0 +1,30 @@
+package factories
+
+import (
+"{{.AppName}}/app/Models"
+"github.com/beyond3800/hawk/database"
+)
+
+type {{.Name}}Factory struct{}
+
+
+func ({{.Name}}Factory) Make() Models.{{.Name}} {
+
+	return Models.{{.Name}}{
+    //  ID:    2
+	//	Name:  "Adam",
+	//  Email: "adam@example.com",
+	}
+
+}
+
+func (f {{.Name}}Factory) Create() (Models.{{.Name}}, error) {
+    factory := f.Make()
+
+	_, err := database.
+		HawkDB().
+		Table("{{.DatabaseName}}").
+		Insert(&factory)
+
+	return factory, err
+}

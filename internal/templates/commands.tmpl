@@ -1,0 +1,9 @@
+package console
+
+type Command func() error
+
+var commands = map[string]Command{}
+
+func Register(name string, command Command) {
+	commands[name] = command
+}

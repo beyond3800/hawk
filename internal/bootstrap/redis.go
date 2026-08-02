@@ -3,11 +3,10 @@ package bootstrap
 import (
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 
+	"github.com/beyond3800/hawk/internal/env"
 	rdb "github.com/beyond3800/hawk/redis"
-	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -15,17 +14,17 @@ var (
 	Rdb* redis.Client
 )
 func ConnectRedis() error { 
-	if err := godotenv.Load(); err != nil{
-		return fmt.Errorf("Unable to load the neccessery file")
-	}
 	
-	dbInt, err := strconv.Atoi(os.Getenv("REDIS_DB"))
+	redisDb,_:= env.Get("REDIS_DB")
+	dbInt, err := strconv.Atoi(redisDb)
+	redisAddr,_ := env.Get("REDIS_ADDR")
+	redisPwd,_ := env.Get("REDIS_PASSWORD")
 	if err != nil{
 		return fmt.Errorf("A number is needed not a string")
 	}
 	Rdb = redis.NewClient(&redis.Options{
-		Addr: os.Getenv("REDIS_ADDR"),
-		Password: os.Getenv("REDIS_PASSWORD"),
+		Addr: redisAddr,
+		Password: redisPwd,
 		DB: dbInt,
 	})
 	pong, err := Rdb.Ping(rdb.Ctx).Result()

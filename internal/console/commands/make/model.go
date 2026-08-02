@@ -1,16 +1,16 @@
-package commands
+package Make
 
 import (
 	"fmt"
 	"log"
 	"os"
 
-	"github.com/beyond3800/hawk/lib"
+	"github.com/beyond3800/hawk/internal/lib"
 	"github.com/spf13/cobra"
 )
 
 
-func createModel(name string, dir string){
+func CreateModel(name string, dir string){
 	if lib.FileExist(dir,name){
 		fmt.Println("This file already in" + dir)
 		return
@@ -34,7 +34,7 @@ var makeModelCmd = &cobra.Command{
 
 		name := args[0]
 		dir := "app/Models"
-		createModel(name,dir)
+		CreateModel(name,dir)
 	},
 }
 

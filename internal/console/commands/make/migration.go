@@ -1,19 +1,20 @@
-package commands
+package Make
 
 import (
 	"fmt"
 	"os"
 	"time"
 
-	"github.com/beyond3800/hawk/lib"
+	"github.com/beyond3800/hawk/internal/lib"
 	"github.com/spf13/cobra"
 )
 
-func createMigration(name string, migrationDir string) {
+func CreateMigration(name string, migrationDir string) {
 	_,err := os.Stat(migrationDir)
 		if err !=nil{
 			if os.IsNotExist(err) {
 				if err := os.MkdirAll(migrationDir, 0755); err != nil {
+					fmt.Println("Unable to create migration directory:", err)
 					return
 				}
 			}
@@ -47,7 +48,7 @@ var migrationCmd = &cobra.Command{
 		migrationDir := "database/migrations"
 		name := args[0]
 
-		createMigration(name,migrationDir)
+		CreateMigration(name,migrationDir)
 	},
 }
 

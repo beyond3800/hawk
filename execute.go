@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	hawk "github.com/beyond3800/hawk/engine"
+	engine "github.com/beyond3800/hawk/engine"
 	"github.com/beyond3800/hawk/internal/console/migration"
+	_"github.com/beyond3800/hawk/seeder"
 )
 
-func Execute(app *hawk.Hawk){
+func Execute(app *engine.Hawk){
 	if len(os.Args)> 1{
 		switch os.Args[1] {
 		case "hawk_migrate":
@@ -29,6 +30,14 @@ func Execute(app *hawk.Hawk){
 				fmt.Println("Status error:", err)
 				return
 			}
+			return
+		// case "hawk_seed":
+		// 	if err := seeder.Run(); err != nil {
+		// 		fmt.Println("Status error:", err)
+		// 		return
+		// 	}
+		// 	return
+		default:
 			return
 		}
 
