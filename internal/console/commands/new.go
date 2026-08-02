@@ -71,17 +71,12 @@ func createProject(projectName string) error {
 		return err
 	}
 
-	if err := lib.MakeTemplate("execute.go","execute",projectName+"/interenal",""); err != nil{
+	if err := lib.MakeTemplate("execute.go","execute",projectName+"/internal",""); err != nil{
 		return err
 	}
-	if err := lib.MakeTemplate("commands.go","commands",projectName+"/interenal",""); err != nil{
+	if err := lib.MakeTemplate("commands.go","commands",projectName+"/internal",""); err != nil{
 		return err
 	}
-	// console/
-    // execute.go
-    // commands.go
-    // seed.go
-    // queue.go
 	Make.CreateMigration("create_users_table",projectName+"/database/migrations")
 	Make.CreateModel("user",projectName+"/app/Models")
 	Make.CreateController("user",projectName+"/app/Http/Controllers")
