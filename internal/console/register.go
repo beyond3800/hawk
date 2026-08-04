@@ -19,6 +19,7 @@ func registerCommands() {
 		commands.AuthCommand(),
 		commands.VersionCommand(),
 		commands.StorageCommand(),
+		commands.DbCommand(),
 	)
 
 	// make cli commands

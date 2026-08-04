@@ -10,9 +10,10 @@ import (
 	"github.com/beyond3800/hawk/internal/templates"
 )
 
-func MakeTemplate(name string, templateName string, path string, data string) error{
+func MakeTemplate(name string, templateName string, path string, data string, appName string) error{
 	type templateDatas struct{
 		Name string
+		AppName string
 	}
 	
 	templateContent := fmt.Sprintf("%s.tmpl", strings.ToLower(templateName))
@@ -33,6 +34,6 @@ func MakeTemplate(name string, templateName string, path string, data string) er
 		return fmt.Errorf("failed to create file: %w", err)
 	}
 	defer file.Close()
-	datas :=  templateDatas{Name:data}
+	datas :=  templateDatas{Name:data , AppName:appName}
 	return tmpl.Execute(file, datas)
 }

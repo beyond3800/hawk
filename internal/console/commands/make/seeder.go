@@ -6,8 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	templatecreator "github.com/beyond3800/hawk/internal/templateCreator"
+	"github.com/beyond3800/hawk/internal/env"
 	"github.com/beyond3800/hawk/internal/lib"
+	templatecreator "github.com/beyond3800/hawk/internal/templateCreator"
 	"github.com/spf13/cobra"
 )
 
@@ -81,7 +82,9 @@ func CreateSeeder(name string, dir string){
 		return
 	}
 	seederName := templatecreator.ToTitle(name)
-	if err := templatecreator.MakeTemplate(name+".go", "seeder", dir, seederName); err != nil {
+	env.Load(".env")
+	appName,_ := env.Get("APP_NAME")
+	if err := templatecreator.MakeTemplate(name+".go", "seeder", dir, seederName, appName); err != nil {
 		fmt.Println(err)
 	}
 	if err := databaseSeeder(dir, seederName) ;err != nil {
@@ -89,7 +92,6 @@ func CreateSeeder(name string, dir string){
 	}
 
 }
-
 
 
 var seederCmd = &cobra.Command{
