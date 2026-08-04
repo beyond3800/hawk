@@ -4,10 +4,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/beyond3800/hawk"
+	engine "github.com/beyond3800/hawk/engine"
+	hawk "github.com/beyond3800/hawk"
 )
 
-func Execute(app *hawk.Hawk) {
+func Execute(app *engine.Hawk) {
 
 	if len(os.Args) > 1 {
 

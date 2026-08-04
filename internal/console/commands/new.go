@@ -71,10 +71,10 @@ func createProject(projectName string) error {
 		return err
 	}
 
-	if err := lib.MakeTemplate("execute.go","execute",projectName+"/internal",""); err != nil{
+	if err := lib.MakeTemplate("execute.go","execute",projectName+"/internal/console",""); err != nil{
 		return err
 	}
-	if err := lib.MakeTemplate("commands.go","commands",projectName+"/internal",""); err != nil{
+	if err := lib.MakeTemplate("commands.go","commands",projectName+"/internal/console",""); err != nil{
 		return err
 	}
 	Make.CreateMigration("create_users_table",projectName+"/database/migrations")
