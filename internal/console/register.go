@@ -20,6 +20,7 @@ func registerCommands() {
 		commands.VersionCommand(),
 		commands.StorageCommand(),
 		commands.DbCommand(),
+		commands.AppCommand(),
 	)
 
 	// make cli commands
@@ -34,6 +35,7 @@ func registerCommands() {
 		Make.ResourceCommand(),
 		Make.FactoryCommand(),
 		Make.SeederCommand(),
+		Make.Command(),
 	)
 
 	// db cli cmmands

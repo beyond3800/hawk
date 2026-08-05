@@ -1,0 +1,13 @@
+package console
+
+
+func {{.Name}}(args []string) error {
+
+    // You can implement your command logic here. For example, 
+    // you can check the arguments and perform actions based on them.
+	return nil
+}
+
+func init() {
+	Register("Name your command", {{.Name}})
+}

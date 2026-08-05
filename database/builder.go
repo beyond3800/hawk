@@ -231,15 +231,9 @@ func (b *Builder) Insert(data any) (sql.Result, error) {
 	structType := val.Type()
 	for i := 0; i < structType.NumField(); i++ {
         field := structType.Field(i)
-		// fieldRequired := field.Tag.Get("validate")
-		// requiredSlice := strings.Split(fieldRequired, "|")
-		// for _,v := range requiredSlice{
-		// 	if v == "required"{
-				keys = append(keys, field.Tag.Get("db"))
-				placeholders = append(placeholders, "?")
-				values = append(values, val.Field(i).Interface())
-		// 	}
-		// }
+			keys = append(keys, field.Tag.Get("db"))
+			placeholders = append(placeholders, "?")
+			values = append(values, val.Field(i).Interface())
 	}
     query := fmt.Sprintf(
         "INSERT INTO %s (%s) VALUES (%s)",
@@ -248,6 +242,32 @@ func (b *Builder) Insert(data any) (sql.Result, error) {
         strings.Join(placeholders, ", "),
     )
 	result, sqlErr := b.exec(query, values...)
+    return result, MySqlErrorFormat(sqlErr)
+}
+func (b *Builder) Create(data map[string]any) (sql.Result, error) {
+
+    if len(data) == 0 {
+        return nil, fmt.Errorf("no data supplied")
+    }
+
+    columns := make([]string, 0, len(data))
+    placeholders := make([]string, 0, len(data))
+    values := make([]any, 0, len(data))
+
+    for column, value := range data {
+        columns = append(columns, column)
+        placeholders = append(placeholders, "?")
+        values = append(values, value)
+    }
+
+    query := fmt.Sprintf(
+        "INSERT INTO %s (%s) VALUES (%s)",
+        b.table,
+        strings.Join(columns, ", "),
+        strings.Join(placeholders, ", "),
+    )
+
+    result, sqlErr := b.exec(query, values...)
     return result, MySqlErrorFormat(sqlErr)
 }
 func (b *Builder) Update(data map[string]any) (sql.Result, error) {

@@ -1,11 +1,23 @@
 package console
 
-import "{{.Name}}/database/seeders"
+import (
+	"fmt"
+	"{{.Name}}/database/seeders"
+)
+
+
+func Seed() error {
+	err := seeders.DatabaseSeeder{}.Run()
+	if err == nil {
+		fmt.Println("Database seeded successfully")
+	}
+	return err
+}
+
+func init() {
+	Register("hawk_seed", Seed)
+
 
 func init() {
 	Register("db:seed", Seed)
-}
-
-func Seed() error {
-	return seeders.DatabaseSeeder{}.Run()
 }

@@ -31,12 +31,6 @@ func Execute(app *engine.Hawk){
 				return
 			}
 			return
-		// case "hawk_seed":
-		// 	if err := seeder.Run(); err != nil {
-		// 		fmt.Println("Status error:", err)
-		// 		return
-		// 	}
-		// 	return
 		default:
 			return
 		}
