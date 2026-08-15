@@ -28,11 +28,19 @@ func createProject(projectName string) error {
 		filepath.Join(projectName, "config"),
 		filepath.Join(projectName, "internal"),
 		filepath.Join(projectName, "console"),
-
+		filepath.Join(projectName, "public"),
 		
 		// Creating the app directory and its subdirectories
 		filepath.Join(projectName, "app/Models"),
 
+		filepath.Join(projectName,"public/css"),
+		filepath.Join(projectName,"public/js"),
+		filepath.Join(projectName,"public/images"),
+		filepath.Join(projectName,"public/fonts"),
+		filepath.Join(projectName,"public/media"),
+		// filepath.Join(projectName,"public/uploads"),
+
+		filepath.Join(projectName, "app/Resources"),
 		filepath.Join(projectName, "app/Http/Controllers"),
 		filepath.Join(projectName, "app/Http/Middleware"),
 		filepath.Join(projectName, "app/Http/Repository"),
@@ -75,6 +83,12 @@ func createProject(projectName string) error {
 		return err
 	}
 	if err := lib.MakeTemplate("commands.go","commands",projectName+"/internal/console",""); err != nil{
+		return err
+	}
+	if err := lib.MakeTemplate("index.html","indexHTML",projectName+"/public",""); err != nil{
+		return err
+	}
+	if err := lib.MakeTemplate("index.css","indexCSS",projectName+"/public/css",""); err != nil{
 		return err
 	}
 	Make.CreateMigration("create_users_table",projectName+"/database/migrations")

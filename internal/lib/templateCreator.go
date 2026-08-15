@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/beyond3800/hawk/internal/templates"
 	"golang.org/x/text/cases"
@@ -15,7 +16,7 @@ func toTitle(s string) string{
 	caser := cases.Title(language.English)
 	return caser.String(s)
 }
-func GenerateTemplate(name string, templateName string, path string) error {
+func GenerateTemplate(name, templateName, path string) error {
 	// Parse the template file in the templates directory
 	type templateDatas struct{
 		Name string
@@ -54,13 +55,7 @@ func GenerateTemplate(name string, templateName string, path string) error {
 	return tmpl.Execute(file, data)
 }
 
-func MakeMigrationTemplate(
-	name string, 
-	templateName string, 
-	migrationName string, 
-	migrationDir string,
-
-	) error {
+func MakeMigrationTemplate( name, templateName, migrationName, migrationDir string) error {
 
 	type templateDatas struct{
 		Name string
@@ -76,12 +71,8 @@ func MakeMigrationTemplate(
 	if err != nil {
 		return err
 	}
-
-	// Set the output file path
-	fileName := filepath.Join(
-        migrationDir,
-        migrationName+".go",
-    )
+	timestamp := time.Now().Format("20060102150405")
+	
 	// fileName = strings.ToUpper(string(name[0]))+string(name[1:])
 	nameArr := strings.Split(name, "_")
 	if len(nameArr) >= 3 &&nameArr[0] == "create" &&nameArr[len(nameArr)-1] == "table" {
@@ -89,8 +80,17 @@ func MakeMigrationTemplate(
 			nameArr[1:len(nameArr)-1],
 			"_",
 		)
+	}else{
+		// strings.CutPrefix(name,"_create")
+		migrationName = fmt.Sprintf("%v_%v_%v","create",name,"table")
 	}
-
+	
+	// Set the output file path
+	migrationName = fmt.Sprintf("%v_%v",timestamp,migrationName)
+	fileName := filepath.Join(
+        migrationDir,
+        migrationName+".go",
+    )
 	file, err := os.Create(fileName)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)
@@ -102,7 +102,7 @@ func MakeMigrationTemplate(
 	return tmpl.Execute(file, data)
 }
 
-func MakeMiddlewareTemplate(name string, templateName string) error {
+func MakeMiddlewareTemplate(name, templateName string) error {
 
 	type templateData struct {
 		Name string
@@ -138,7 +138,7 @@ func MakeMiddlewareTemplate(name string, templateName string) error {
 	return tmpl.Execute(file, data)
 }
 
-func MakeTemplate(name string, templateName string, path string, data string) error{
+func MakeTemplate(name, templateName, path, data string) error{
 	type templateDatas struct{
 		Name string
 	}

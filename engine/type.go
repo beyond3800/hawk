@@ -1,6 +1,9 @@
 package hawk
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
 	"net/http"
 	"strings"
 	"time"
@@ -59,30 +62,161 @@ type SuccessResponse struct {
     Code      int     `json:"code"`
 }
 
-func match(pattern, path string) (bool, map[string]string) {
-    params := make(map[string]string)
+// func match(pattern, path string) (bool, map[string]string) {
+//     params := make(map[string]string)
 
-    patternParts := strings.Split(strings.Trim(pattern, "/"), "/")
-    pathParts := strings.Split(strings.Trim(path, "/"), "/")
+//     patternParts := strings.Split(strings.Trim(pattern, "/"), "/")
+//     pathParts := strings.Split(strings.Trim(path, "/"), "/")
 	
-    if len(patternParts) != len(pathParts) {
-        return false, nil
+//     if len(patternParts) != len(pathParts) {
+//         return false, nil
+//     }
+
+//     for i := range patternParts {
+
+// 		if strings.HasPrefix(patternParts[i], "*") {
+// 			key := patternParts[i][1:]
+// 			params[key] = strings.Join(pathParts[i:], "/")
+// 			return true, params
+// 		}
+//         if strings.HasPrefix(patternParts[i], ":") {
+
+//             key := patternParts[i][1:]
+//             params[key] = pathParts[i]
+
+//             continue
+//         }
+
+//         if patternParts[i] != pathParts[i] {
+//             return false, nil
+//         }
+//     }
+
+//     return true, params
+// }
+func match(pattern, path string) (bool, map[string]string) {
+	params := make(map[string]string)
+
+	patternParts := strings.Split(
+		strings.Trim(pattern, "/"),
+		"/",
+	)
+
+	pathParts := strings.Split(
+		strings.Trim(path, "/"),
+		"/",
+	)
+
+	for i := range patternParts {
+
+		// Wildcard parameter
+		if strings.HasPrefix(patternParts[i], "*") {
+			key := patternParts[i][1:]
+
+			params[key] = strings.Join(pathParts[i:], "/")
+
+			return true, params
+		}
+
+		// We don't have a corresponding path segment.
+		if i >= len(pathParts) {
+			return false, nil
+		}
+
+		// Normal parameter
+		if strings.HasPrefix(patternParts[i], ":") {
+			key := patternParts[i][1:]
+			params[key] = pathParts[i]
+
+			continue
+		}
+
+		// Static segment
+		if patternParts[i] != pathParts[i] {
+			return false, nil
+		}
+	}
+
+	// The route must consume the entire path
+	// unless a wildcard already returned above.
+	if len(patternParts) != len(pathParts) {
+		return false, nil
+	}
+
+	return true, params
+}
+
+func isStaticRoute(pattern string) bool {
+	parts := strings.Split(strings.Trim(pattern, "/"), "/")
+
+	for _, part := range parts {
+		if strings.HasPrefix(part, ":") {
+			return false
+		}
+	}
+
+	return true
+}
+
+func safeStaticPath(directory, requested string) (string, error) {
+	base, err := filepath.Abs(directory)
+	if err != nil {
+		return "", err
+	}
+
+	target, err := filepath.Abs(
+		filepath.Join(base, requested),
+	)
+	if err != nil {
+		return "", err
+	}
+
+	relative, err := filepath.Rel(base, target)
+	if err != nil {
+		return "", err
+	}
+
+	if relative == ".." ||
+		strings.HasPrefix(
+			relative,
+			".."+string(os.PathSeparator),
+		) {
+		return "", fmt.Errorf("path escapes static directory")
+	}
+
+	fmt.Println(directory)
+	fmt.Println(requested)
+	fmt.Println(target)
+	return target, nil
+}
+
+func isWildcardRoute(pattern string) bool {
+	parts := strings.Split(
+		strings.Trim(pattern, "/"),
+		"/",
+	)
+
+	for _, part := range parts {
+		if strings.HasPrefix(part, "*") {
+			return true
+		}
+	}
+
+	return false
+}
+func wildcardScore(pattern string) int {
+    parts := strings.Split(
+        strings.Trim(pattern, "/"),
+        "/",
+    )
+
+    score := 0
+
+    for _, part := range parts {
+        if !strings.HasPrefix(part, "*") {
+            score++
+        }
     }
 
-    for i := range patternParts {
-
-        if strings.HasPrefix(patternParts[i], ":") {
-
-            key := patternParts[i][1:]
-            params[key] = pathParts[i]
-
-            continue
-        }
-
-        if patternParts[i] != pathParts[i] {
-            return false, nil
-        }
-    }
-
-    return true, params
+    return score
 }

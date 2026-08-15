@@ -7,24 +7,29 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-func MySqlErrorFormat(sqlErrr error) error{
+func MySqlErrorFormat(sqlErr error) error {
+	if sqlErr == nil {
+		return nil
+	}
+
 	var mysqlErr *mysql.MySQLError
-	var err error
-	if errors.As(sqlErrr, &mysqlErr){
+
+	if errors.As(sqlErr, &mysqlErr) {
 		switch mysqlErr.Number {
 		case 1062:
-			err = fmt.Errorf("Duplicate key")
-			fmt.Println(err)
+			return fmt.Errorf("duplicate key: %w", sqlErr)
+
 		case 1452:
-			err = fmt.Errorf("Foreign key contraint failed")
-			fmt.Println(err)
+			return fmt.Errorf("foreign key constraint failed: %w", sqlErr)
+
 		case 1048:
-			err = fmt.Errorf("Column cannot be long")
-			fmt.Println(err)
+			return fmt.Errorf("column cannot be null: %w", sqlErr)
+
 		case 1406:
-			err = fmt.Errorf("Data too long")
-			fmt.Println(err)
+			return fmt.Errorf("data too long: %w", sqlErr)
 		}
 	}
-	return err
+
+	// Important: don't swallow unknown/database errors.
+	return sqlErr
 }

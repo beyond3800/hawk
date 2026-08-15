@@ -11,7 +11,7 @@ import (
 var dbCmd = &cobra.Command{
 	Use: "db",
 	Short: `
-	db seed`,
+	      db seed`,
 	Long: "This command is use for database services to seed the database",
 	Run: func(cmd *cobra.Command, args []string) {
 

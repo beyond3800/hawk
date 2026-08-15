@@ -5,11 +5,11 @@ import (
 )
 
 type {{.Name}} struct {}
-func ({{.ShortName }}c * {{.Name}}) Index(c *hawk.Context) {
+func ({{.Name}}) Index(c *hawk.Context) {
 	// TODO: implement index
 }
 
-func ( {{.Name}}) Store(c *hawk.Context) {
+func ({{.Name}}) Store(c *hawk.Context) {
 	// TODO: implement store
 }
 

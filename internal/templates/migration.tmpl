@@ -8,7 +8,7 @@ import (
 
 type {{.Name}}Migration struct{}
 
-func ({{.Name}} {{.Name}}Migration) Up() error {
+func ({{.Name}}Migration) Up() error {
     _, err := database.HawkDB().Conn.Exec(`
         CREATE TABLE {{.TableName}} (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -21,7 +21,7 @@ func ({{.Name}} {{.Name}}Migration) Up() error {
     return err
 }
 
-func ({{.Name}} {{.Name}}Migration) Down() error {
+func ({{.Name}}Migration) Down() error {
     _, err := database.HawkDB().Conn.Exec(`
         DROP TABLE {{.TableName}}
     `)

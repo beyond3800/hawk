@@ -9,8 +9,8 @@ var all = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		controller.Run(cmd,args)
 		repository.Run(cmd,args)
-		makeModelCmd.Run(cmd,args)
-		service.Run(cmd,args)
+		modelCmd.Run(cmd,args)
+		serviceCmd.Run(cmd,args)
 	},
 }
 

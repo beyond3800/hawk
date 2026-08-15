@@ -9,7 +9,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var service = &cobra.Command{
+func CreateService() {
+	
+}
+
+var serviceCmd = &cobra.Command{
 	Use: "service",
 	Short: "Use to create service file",
 	Args: cobra.ExactArgs(1),
@@ -38,5 +42,5 @@ var service = &cobra.Command{
 }
 
 func ServiceCommand() *cobra.Command {
-	return service
+	return serviceCmd
 }

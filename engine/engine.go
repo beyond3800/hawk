@@ -8,10 +8,7 @@ import (
 
 type H map[string]any
 
-func (h *Hawk) ServeHTTP(
-	response http.ResponseWriter,
-	request *http.Request,
-) {
+func (h *Hawk) ServeHTTP(response http.ResponseWriter, request *http.Request) {
 
 	c := &Context{
 		Response: response,
@@ -35,13 +32,22 @@ func (h *Hawk) ServeHTTP(
 
 	c.Next()
 }
-func (h *Hawk) router() HandlerFunc {
 
+func (h *Hawk) router() HandlerFunc {
 	return func(c *Context) {
 
+		// 1. Try static routes first.
 		for _, route := range h.routes {
 
 			if route.Method != c.Request.Method {
+				continue
+			}
+
+			if !isStaticRoute(route.Pattern) {
+				continue
+			}
+
+			if isWildcardRoute(route.Pattern) {
 				continue
 			}
 
@@ -56,17 +62,85 @@ func (h *Hawk) router() HandlerFunc {
 
 			c.params = params
 
-			// Route middleware + controller
 			c.ReplaceHandlers(route.Handler...)
-
 			c.Next()
 
+			return
+		}
+
+		// 2. Try parameter routes.
+		for _, route := range h.routes {
+
+			if route.Method != c.Request.Method {
+				continue
+			}
+
+			if isStaticRoute(route.Pattern) {
+				continue
+			}
+
+			matched, params := match(
+				route.Pattern,
+				c.Request.URL.Path,
+			)
+
+			if !matched {
+				continue
+			}
+
+			c.params = params
+
+			c.ReplaceHandlers(route.Handler...)
+			c.Next()
+
+			return
+		}
+
+		// 3. Try wildcard routes
+		var bestRoute *Route
+		var bestParams map[string]string
+		bestScore := -1
+
+		for i := range h.routes {
+			route := &h.routes[i]
+
+			if route.Method != c.Request.Method {
+				continue
+			}
+
+			if !isWildcardRoute(route.Pattern) {
+				continue
+			}
+
+			matched, params := match(
+				route.Pattern,
+				c.Request.URL.Path,
+			)
+
+			if !matched {
+				continue
+			}
+
+			score := wildcardScore(route.Pattern)
+
+			if score > bestScore {
+				bestRoute = route
+				bestParams = params
+				bestScore = score
+			}
+		}
+
+		if bestRoute != nil {
+			c.params = bestParams
+			c.ReplaceHandlers(bestRoute.Handler...)
+			c.Next()
 			return
 		}
 
 		http.NotFound(c.Response, c.Request)
 	}
 }
+
 func (h *Hawk) Use(handler ...HandlerFunc){
 	h.middleware = append(h.middleware, handler...)
 }

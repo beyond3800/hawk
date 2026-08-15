@@ -20,9 +20,11 @@ func (c *Context) BindJSON(obj any) error{
     }
 	return nil
 }
-func (c *Context) BindAndValidate(obj any) error {
+func (c *Context) BindAndValidate(obj any) error{
     
     if err := c.BindJSON(obj); err != nil {
+        c.ValidationError(err.Error())
+        c.Abort()
         return err
     }
     errors, err := validation.Validate(obj)
@@ -129,7 +131,7 @@ func (c *Context) DeleteCookie(name string) {
 	})
 }
 func (c *Context) Form(key string) string {
-    _ = c.Request.ParseForm()
+    _ = c.Request.ParseMultipartForm(32 << 20)
     return c.Request.FormValue(key)
 }
 func (c *Context) DefaultForm(key, defaultValue string) string {
@@ -140,7 +142,7 @@ func (c *Context) DefaultForm(key, defaultValue string) string {
     return value
 }
 func (c *Context) Forms() map[string][]string {
-    _ = c.Request.ParseForm()
+    _ = c.Request.ParseMultipartForm(32 << 20)
     return c.Request.Form
 }
 func (c *Context) File(name string) (*multipart.FileHeader, error) {

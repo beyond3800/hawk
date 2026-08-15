@@ -36,6 +36,7 @@ func registerCommands() {
 		Make.FactoryCommand(),
 		Make.SeederCommand(),
 		Make.Command(),
+		Make.RequestCommand(),
 	)
 
 	// db cli cmmands

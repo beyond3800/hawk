@@ -22,7 +22,7 @@ var factoryCmd = &cobra.Command{
 		if err !=nil{
 			if os.IsNotExist(err) {
 				if err := os.MkdirAll(dir, 0755); err != nil {
-					fmt.Println("Unable to create resource directory:", err)
+					fmt.Println("Unable to create factory directory:", err)
 					return
 				}
 			}

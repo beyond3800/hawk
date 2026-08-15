@@ -9,11 +9,12 @@ import (
 var makeCmd = &cobra.Command{
 	Use: "make",
 	Short: `
-	make controller
-	make model [name] 
-	make service [name] 
-	make repository [name]
-	make all`,
+	      make controller
+	      make model [name] 
+	      make service [name] 
+	      make repository [name]
+	      make request [name]
+	      make all`,
 	Long: "This command is use to make model, controller, middleware, service",
 	Run: func(cmd *cobra.Command, args []string) {
 

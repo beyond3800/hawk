@@ -8,8 +8,8 @@ import (
 
 type {{.Name}} struct {
     ID          string        `json:"id" db:"id"`
-    Name        string        `json:"name" validate:"required" db:"name"`
-    Created_at  time.Time     `json:"created_at"`
-    Updated_at  sql.NullTime  `json:"updated_at"`
+    Name        string        `json:"name" db:"name"`
+    CreatedAt  time.Time      `json:"created_at" db:"created_at"`
+	UpdatedAt  sql.NullTime   `json:"updated_at" db:"updated_at"`
 }
     

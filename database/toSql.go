@@ -1,0 +1,41 @@
+package database
+
+
+import (
+	"fmt"
+	"strings"
+)
+
+func (b *Builder) ToSQL() (string, []any) {
+
+	columns := "*"
+
+	if len(b.columns) > 0 {
+		columns = strings.Join(b.columns, ", ")
+	}
+
+	query := fmt.Sprintf(
+		"SELECT %s FROM %s",
+		columns,
+		b.table,
+	)
+
+	// if b.orderBy != "" {
+	// 	query += " ORDER BY " + b.orderBy
+	// }
+
+	if len(b.wheres) > 0 {
+		query += " WHERE "
+		query += strings.Join(b.wheres, " AND ")
+	}
+
+	if b.limit > 0 {
+		query += fmt.Sprintf(" LIMIT %d",
+			b.limit,
+		)
+	}
+	if b.offset > 0 {
+		query += fmt.Sprintf(" OFFSET %d", b.offset)
+	}
+	return query, b.bindings
+}

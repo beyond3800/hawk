@@ -16,6 +16,7 @@ func SetupRoutes() *hawk.Hawk {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
+	app.Static("/", "./public")
 	app.Get("/", func(c *hawk.Context) {
 		c.JSON(200, hawk.SuccessResponse{
 			Success: "Welcome to Hawk",
