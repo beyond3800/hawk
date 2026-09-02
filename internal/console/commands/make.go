@@ -35,6 +35,6 @@ var makeCmd = &cobra.Command{
 	},
 }
 
-func MakeCommand() *cobra.Command {
+func MakeCommands() *cobra.Command {
 	return makeCmd
 }

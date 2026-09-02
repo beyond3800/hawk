@@ -17,7 +17,6 @@ func LatestBatch() (int, error) {
 	return batch, err
 }
 
-
 func BatchMigrations(batch int) ([]string, error) {
 
 	rows, err := database.HawkDB().Conn.Query(`
@@ -62,6 +61,7 @@ func FindMigration(name string) Migration {
 
 	return nil
 }
+
 func RemoveMigration(name string) error {
 
 	_, err := database.HawkDB().Conn.Exec(`
@@ -71,6 +71,7 @@ func RemoveMigration(name string) error {
 
 	return err
 }
+
 func Rollback() error{
 	batch, err := LatestBatch()
 	fmt.Println("Latest batch:", batch)

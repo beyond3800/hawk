@@ -3,11 +3,9 @@ package database
 
 import (
 	"fmt"
-	"strings"
 )
 
 func (b *Builder) Count() (int, error) {
-
 	var count int
 
 	query := fmt.Sprintf(
@@ -15,11 +13,13 @@ func (b *Builder) Count() (int, error) {
 		b.table,
 	)
 
-	if len(b.wheres) > 0 {
-		query += " WHERE " + strings.Join(b.wheres, " AND ")
-	}
+	query += b.buildWhere()
 
-	err := b.queryRow(query, b.bindings...).Scan(&count)
+	err := b.queryRow(
+		query,
+		b.bindings...,
+	).Scan(&count)
+
 	if err != nil {
 		return 0, MySqlErrorFormat(err)
 	}

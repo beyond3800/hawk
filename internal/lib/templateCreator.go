@@ -8,6 +8,7 @@ import (
 	"text/template"
 	"time"
 
+	templatecreator "github.com/beyond3800/hawk/internal/templateCreator"
 	"github.com/beyond3800/hawk/internal/templates"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -16,11 +17,13 @@ func toTitle(s string) string{
 	caser := cases.Title(language.English)
 	return caser.String(s)
 }
+
 func GenerateTemplate(name, templateName, path string) error {
 	// Parse the template file in the templates directory
 	type templateDatas struct{
-		Name string
+		Name      string
 		ShortName string
+		TableName string
 	}
 	
 	templateContent := fmt.Sprintf("%s.tmpl", strings.ToLower(templateName))
@@ -48,10 +51,11 @@ func GenerateTemplate(name, templateName, path string) error {
 
 	caser := cases.Title(language.English)
 	name = caser.String(name)
-
+	tableName := templatecreator.Pluralize(name)
 	// Fill in the template and write the file
+	
 	shortName := strings.ToLower(name[:1])
-	data :=  templateDatas{Name:name,ShortName: shortName}
+	data :=  templateDatas{Name:name, ShortName:shortName, TableName:strings.ToLower(tableName)}
 	return tmpl.Execute(file, data)
 }
 
@@ -62,7 +66,7 @@ func MakeMigrationTemplate( name, templateName, migrationName, migrationDir stri
 		MigrationName string
 		TableName string
 	}
-
+	name = templatecreator.Pluralize(name)
 	templateContent := fmt.Sprintf("%s.tmpl",strings.ToLower(templateName))
 	tmpl, err := template.ParseFS(
 		templates.Files,

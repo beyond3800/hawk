@@ -3,30 +3,24 @@ package Migrations
 import (
 
     "github.com/beyond3800/hawk/migration"
-	"github.com/beyond3800/hawk/database"
+    "github.com/beyond3800/hawk/database"
 )
 
 type {{.Name}}Migration struct{}
 
 func ({{.Name}}Migration) Up() error {
-    _, err := database.HawkDB().Conn.Exec(`
-        CREATE TABLE {{.TableName}} (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(255),
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )
-    `)
 
-    return err
+	table := database.HawkDB().Schema().Table("{{.TableName}}")
+
+	table.BigInt("id").AutoIncrement().Primary()
+	table.String("name", 255).Required()
+
+	return table.Create()
 }
 
 func ({{.Name}}Migration) Down() error {
-    _, err := database.HawkDB().Conn.Exec(`
-        DROP TABLE {{.TableName}}
-    `)
-
-    return err
+    table := database.HawkDB().Schema().Table("{{.TableName}}")
+ 	return table.Drop().Execute()
 }
 
 func init (){

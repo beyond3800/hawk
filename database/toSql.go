@@ -7,7 +7,6 @@ import (
 )
 
 func (b *Builder) ToSQL() (string, []any) {
-
 	columns := "*"
 
 	if len(b.columns) > 0 {
@@ -20,22 +19,15 @@ func (b *Builder) ToSQL() (string, []any) {
 		b.table,
 	)
 
-	// if b.orderBy != "" {
-	// 	query += " ORDER BY " + b.orderBy
-	// }
-
-	if len(b.wheres) > 0 {
-		query += " WHERE "
-		query += strings.Join(b.wheres, " AND ")
-	}
+	query += b.buildWhere()
 
 	if b.limit > 0 {
-		query += fmt.Sprintf(" LIMIT %d",
-			b.limit,
-		)
+		query += fmt.Sprintf(" LIMIT %d", b.limit)
 	}
+
 	if b.offset > 0 {
 		query += fmt.Sprintf(" OFFSET %d", b.offset)
 	}
+
 	return query, b.bindings
 }

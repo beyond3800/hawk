@@ -1,4 +1,4 @@
-package commands
+package migration
 
 import (
 	"github.com/beyond3800/hawk/internal/bootstrap"

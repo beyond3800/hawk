@@ -22,6 +22,12 @@ type Builder struct {
 	page     int
 
 	tx	     *sql.Tx
+
+	hasSoftDeletes bool
+	withTrash bool
+	onlyTrash bool
+
+	schemaErr error
 }
 
 

@@ -17,7 +17,8 @@ func Pluralize(name string) string{
 	var newName string
 	switch {
 	case strings.HasSuffix(name, "y"):
-		newName = strings.Replace(newName,"y","ies",1)
+		newstring,_:=strings.CutSuffix(name,"y",)
+		newName = newstring+"ies"
 	case strings.HasSuffix(name,"s"):
 		newName = name
 	default:

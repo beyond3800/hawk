@@ -2,6 +2,9 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
+
+	schema "github.com/beyond3800/hawk/database/schema"
 )
 
 
@@ -25,3 +28,23 @@ func resetDB() {
 func HawkDB() *DB {
 	return instance
 }
+
+func (db *DB) Schema() *schema.Schema {
+	return &schema.Schema{
+		Db: db.Conn,
+	}
+}
+
+func (db *DB) Model(model any) (*ModelQuery, error) {
+	m, ok := model.(interface {
+		TableName() string
+	})
+	if !ok {
+		return nil, fmt.Errorf("model must implement TableName() string")
+	}
+	return &ModelQuery{
+		model:   model,
+		builder: db.Table(m.TableName()),
+	}, nil
+}
+

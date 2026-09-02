@@ -31,6 +31,24 @@ func Execute(app *engine.Hawk){
 				return
 			}
 			return
+		case "hawk_reset":
+			if err :=migration.Reset(); err != nil {
+				fmt.Println("Reset error:", err)
+				return
+			}
+			return
+		case "hawk_refresh":
+			if err :=migration.Refresh(); err != nil {
+				fmt.Println("Reset error:", err)
+				return
+			}
+			return
+		case "hawk_fresh":
+			if err :=migration.Fresh(); err != nil {
+				fmt.Println("Reset error:", err)
+				return
+			}
+			return
 		default:
 			return
 		}

@@ -12,4 +12,8 @@ type {{.Name}} struct {
     CreatedAt  time.Time      `json:"created_at" db:"created_at"`
 	UpdatedAt  sql.NullTime   `json:"updated_at" db:"updated_at"`
 }
-    
+
+
+func ({{.Name}}) TableName() string{
+	return "{{.TableName}}"
+}
